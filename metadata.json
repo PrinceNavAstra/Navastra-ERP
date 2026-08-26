@@ -1,0 +1,6 @@
+{
+  "name": "Navastra",
+  "description": "Navastra - Enterprise Modular ERP & CRM Platform with Odoo-style App Launcher, Module Store, Sales Pipeline, Invoicing, Inventory, HR, Google Workspace integrations, and Gemini AI Copilot.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
