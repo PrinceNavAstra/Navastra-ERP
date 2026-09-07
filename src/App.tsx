@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ViewType, 
-  Deal, 
-  Lead, 
-  Contact, 
-  Account, 
-  Invoice, 
-  EmailMessage, 
-  CalendarEvent, 
-  GoogleMeeting, 
-  DealStage, 
+import {
+  ViewType,
+  Deal,
+  Lead,
+  Contact,
+  Account,
+  Invoice,
+  EmailMessage,
+  CalendarEvent,
+  GoogleMeeting,
+  DealStage,
   InvoiceStatus,
   StageColorConfig,
   LeadStageColorConfig,
@@ -18,15 +18,15 @@ import {
   NavastraAppId,
   ThemeMode
 } from './types';
-import { 
-  initialDeals, 
-  initialLeads, 
-  initialContacts, 
-  initialAccounts, 
-  initialInvoices, 
-  initialEmails, 
-  initialCalendarEvents, 
-  initialMeetings 
+import {
+  initialDeals,
+  initialLeads,
+  initialContacts,
+  initialAccounts,
+  initialInvoices,
+  initialEmails,
+  initialCalendarEvents,
+  initialMeetings
 } from './data/initialData';
 import { initialNavastraApps } from './data/appsData';
 
@@ -52,17 +52,12 @@ import { DraggableAiCopilot } from './components/DraggableAiCopilot';
 
 // Modular Apps
 import { SalesAppView } from './components/apps/SalesAppView';
-import { InventoryAppView } from './components/apps/InventoryAppView';
-import { ProjectsAppView } from './components/apps/ProjectsAppView';
-import { HrAppView } from './components/apps/HrAppView';
-import { HelpdeskAppView } from './components/apps/HelpdeskAppView';
+import { PurchaseAppView } from './components/apps/PurchaseAppView';
+import { AccountingAppView } from './components/apps/AccountingAppView';
+import { PosAppView } from './components/apps/PosAppView';
 import { SettingsAppView } from './components/apps/SettingsAppView';
 
 // Modals
-import { NewDealModal } from './components/modals/NewDealModal';
-import { NewLeadModal } from './components/modals/NewLeadModal';
-import { NewContactModal } from './components/modals/NewContactModal';
-import { NewInvoiceModal } from './components/modals/NewInvoiceModal';
 import { DealDetailModal } from './components/modals/DealDetailModal';
 import { CrmSettingsModal } from './components/modals/CrmSettingsModal';
 
@@ -76,22 +71,60 @@ const defaultStageColors: StageColorConfig[] = [
 ];
 
 export default function App() {
-  // Modular Apps Registry State
-  const [apps, setApps] = useState<NavastraApp[]>(() => {
+  const APP_STORAGE_KEY = 'navastra_apps_v1';
+  const DUMMY_DATA_KEY = 'navastra_dummy_data_enabled';
+  const DUMMY_DATA_DELETED_KEY = 'navastra_dummy_data_deleted';
+
+  const saveAppsRegistry = (nextApps: NavastraApp[]) => {
     try {
-      const saved = localStorage.getItem('navastra_apps_v1');
-      if (saved) return JSON.parse(saved);
+      localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(nextApps));
     } catch (e) {
-      console.warn('Failed to load apps from storage', e);
+      console.warn('Failed to persist app registry locally', e);
     }
-    return initialNavastraApps;
-  });
+
+    fetch('/api/apps', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(nextApps),
+    }).catch(() => {
+      // Ignore server-side persistence failures in local-only mode.
+    });
+  };
+
+  const [apps, setApps] = useState<NavastraApp[]>(initialNavastraApps);
+
+  useEffect(() => {
+    const loadApps = async () => {
+      try {
+        const stored = localStorage.getItem(APP_STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored) as NavastraApp[];
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setApps(parsed);
+            return;
+          }
+        }
+
+        const serverResponse = await fetch('/api/apps');
+        if (serverResponse.ok) {
+          const serverApps = await serverResponse.json() as NavastraApp[];
+          if (Array.isArray(serverApps) && serverApps.length > 0) {
+            setApps(serverApps);
+            localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(serverApps));
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load apps from storage or server', e);
+      }
+    };
+
+    loadApps();
+  }, []);
 
   // Navigation & Layout
   const [currentView, setCurrentView] = useState<ViewType>('apps_grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeDetailEntity, setActiveDetailEntity] = useState<Deal | Lead | null>(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
   // Theme & Appearance Mode (dark / light)
   const [theme, setTheme] = useState<ThemeMode>(() => {
@@ -124,6 +157,71 @@ export default function App() {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
+  const getDummyDataState = () => {
+    try {
+      const deleted = localStorage.getItem(DUMMY_DATA_DELETED_KEY) === 'true';
+      const enabled = localStorage.getItem(DUMMY_DATA_KEY) === 'true';
+      return { enabled: !deleted && enabled, deleted };
+    } catch (e) {
+      console.warn('Failed to load dummy data preference', e);
+      return { enabled: false, deleted: false };
+    }
+  };
+
+  const dummyDataState = getDummyDataState();
+  const [dummyDataEnabled, setDummyDataEnabled] = useState<boolean>(dummyDataState.enabled);
+  const [dummyDataDeleted, setDummyDataDeleted] = useState<boolean>(dummyDataState.deleted);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(DUMMY_DATA_KEY, String(dummyDataEnabled));
+      localStorage.setItem(DUMMY_DATA_DELETED_KEY, String(dummyDataDeleted));
+    } catch (e) {
+      console.warn('Failed to persist dummy data preference', e);
+    }
+  }, [dummyDataEnabled, dummyDataDeleted]);
+
+  const applyDummyDataSet = (enabled: boolean) => {
+    if (!enabled) {
+      setDeals([]);
+      setLeads([]);
+      setContacts([]);
+      setAccounts([]);
+      setInvoices([]);
+      setEmails([]);
+      setCalendarEvents([]);
+      setMeetings([]);
+      return;
+    }
+
+    setDeals(initialDeals);
+    setLeads(initialLeads);
+    setContacts(initialContacts);
+    setAccounts(initialAccounts);
+    setInvoices(initialInvoices);
+    setEmails(initialEmails);
+    setCalendarEvents(initialCalendarEvents);
+    setMeetings(initialMeetings);
+  };
+
+  const handleToggleDummyData = (enabled: boolean) => {
+    if (dummyDataDeleted && enabled) return;
+    setDummyDataEnabled(enabled);
+    if (!enabled) {
+      setDummyDataDeleted(false);
+    }
+    applyDummyDataSet(enabled);
+  };
+
+  const handleDeleteDummyData = () => {
+    const confirmed = window.confirm('Delete all dummy ERP data permanently? This action cannot be undone and the dummy data will never return for this workspace.');
+    if (!confirmed) return;
+
+    setDummyDataEnabled(false);
+    setDummyDataDeleted(true);
+    applyDummyDataSet(false);
+  };
+
   // CRM Settings & Stage Colors
   const [isCrmSettingsOpen, setIsCrmSettingsOpen] = useState<boolean>(false);
   const [stageConfigs, setStageConfigs] = useState<StageColorConfig[]>(() => {
@@ -148,36 +246,28 @@ export default function App() {
   });
 
   // Primary CRM & ERP State
-  const [deals, setDeals] = useState<Deal[]>(initialDeals);
-  const [leads, setLeads] = useState<Lead[]>(initialLeads);
-  const [contacts, setContacts] = useState<Contact[]>(initialContacts);
-  const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
-  const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
-  const [emails, setEmails] = useState<EmailMessage[]>(initialEmails);
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(initialCalendarEvents);
-  const [meetings, setMeetings] = useState<GoogleMeeting[]>(initialMeetings);
+  const [deals, setDeals] = useState<Deal[]>(() => (dummyDataState.enabled ? initialDeals : []));
+  const [leads, setLeads] = useState<Lead[]>(() => (dummyDataState.enabled ? initialLeads : []));
+  const [contacts, setContacts] = useState<Contact[]>(() => (dummyDataState.enabled ? initialContacts : []));
+  const [accounts, setAccounts] = useState<Account[]>(() => (dummyDataState.enabled ? initialAccounts : []));
+  const [invoices, setInvoices] = useState<Invoice[]>(() => (dummyDataState.enabled ? initialInvoices : []));
+  const [emails, setEmails] = useState<EmailMessage[]>(() => (dummyDataState.enabled ? initialEmails : []));
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(() => (dummyDataState.enabled ? initialCalendarEvents : []));
+  const [meetings, setMeetings] = useState<GoogleMeeting[]>(() => (dummyDataState.enabled ? initialMeetings : []));
 
   // Gemini AI Drawers & Modals
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
   const [isHighThinkingOpen, setIsHighThinkingOpen] = useState(false);
   const [selectedDealForHighThinking, setSelectedDealForHighThinking] = useState<Deal | null>(null);
 
-  // Entity Modals
-  const [isNewDealOpen, setIsNewDealOpen] = useState(false);
-  const [isNewLeadOpen, setIsNewLeadOpen] = useState(false);
-  const [isNewContactOpen, setIsNewContactOpen] = useState(false);
-  const [isNewInvoiceOpen, setIsNewInvoiceOpen] = useState(false);
+  // Entity detail tracking only; creation popups are intentionally disabled.
   const [selectedDealForDetail, setSelectedDealForDetail] = useState<Deal | null>(null);
 
   // App Install / Uninstall Handlers
   const handleInstallApp = (appId: NavastraAppId) => {
     setApps(prev => {
       const updated = prev.map(a => a.id === appId ? { ...a, isInstalled: true } : a);
-      try {
-        localStorage.setItem('navastra_apps_v1', JSON.stringify(updated));
-      } catch (e) {
-        console.warn('Failed to persist app install', e);
-      }
+      saveAppsRegistry(updated);
       return updated;
     });
   };
@@ -185,11 +275,7 @@ export default function App() {
   const handleUninstallApp = (appId: NavastraAppId) => {
     setApps(prev => {
       const updated = prev.map(a => a.id === appId ? { ...a, isInstalled: false } : a);
-      try {
-        localStorage.setItem('navastra_apps_v1', JSON.stringify(updated));
-      } catch (e) {
-        console.warn('Failed to persist app uninstall', e);
-      }
+      saveAppsRegistry(updated);
       return updated;
     });
   };
@@ -204,6 +290,14 @@ export default function App() {
       setCurrentView('app_store');
     } else if (appId === 'settings') {
       setCurrentView('settings');
+    } else if (appId === 'sales') {
+      setCurrentView('sales_orders');
+    } else if (appId === 'purchase') {
+      setCurrentView('purchase');
+    } else if (appId === 'accounting') {
+      setCurrentView('accounting');
+    } else if (appId === 'pos') {
+      setCurrentView('pos');
     } else {
       setCurrentView('pipeline');
     }
@@ -222,15 +316,46 @@ export default function App() {
     setDeals(prev => prev.map(d => d.id === dealId ? { ...d, notes, updatedAt: new Date().toISOString().split('T')[0] } : d));
   };
 
-  // Create Deal
-  const handleCreateDeal = (newDealData: Omit<Deal, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newDeal: Deal = {
-      ...newDealData,
-      id: `deal-${Date.now()}`,
+  // Direct Open New Deal (Full detail page with blank fields ready for user input)
+  const handleOpenNewDealFullPage = () => {
+    const blankDeal: Deal = {
+      id: `deal-new-${Date.now()}`,
+      title: '',
+      company: '',
+      contactName: '',
+      contactEmail: '',
+      contactPhone: '',
+      value: 0,
+      stage: 'lead_in',
+      probability: 35,
+      expectedCloseDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString().split('T')[0],
+      priority: 'medium',
+      source: 'Referral',
+      avatarInitials: 'ND',
+      avatarBg: '#d4a853',
+      timeAgo: 'Just now',
+      city: 'San Francisco',
+      country: 'USA',
+      lat: 37.7749,
+      lng: -122.4194,
+      notes: '',
+      tags: ['New Deal'],
+      assignedTo: 'Alex Rivera',
+      aiScore: 0,
+      aiAnalysis: '',
+      actionItems: [
+        { id: `act-${Date.now()}-1`, title: 'Confirm stakeholder and budget fit', dueDate: 'Tomorrow, 2:00 PM', completed: false, type: 'review' },
+        { id: `act-${Date.now()}-2`, title: 'Schedule discovery call with the prospect', dueDate: 'Mar 15, 11:00 AM', completed: false, type: 'meeting' }
+      ],
+      activities: [
+        { id: `ev-${Date.now()}-1`, type: 'note', title: 'New Deal Draft Created', description: 'Deal initialized by Alex Rivera in Navastra CRM.', date: 'Today at 09:00 AM', author: 'Alex Rivera' }
+      ],
+      comments: [],
       createdAt: new Date().toISOString().split('T')[0],
       updatedAt: new Date().toISOString().split('T')[0]
     };
-    setDeals([newDeal, ...deals]);
+
+    setActiveDetailEntity(blankDeal);
   };
 
   // Direct Open New Lead (Full Dossier Page with blank fields ready for user input)
@@ -314,7 +439,7 @@ export default function App() {
     setActiveDetailEntity(updatedLead);
   };
 
-  // Create Lead and Redirect to Detail Page
+  // Create Lead is redirected directly to the main page without any popup.
   const handleCreateLead = (newLeadData: Omit<Lead, 'id' | 'createdAt'>) => {
     const newLead: Lead = {
       ...newLeadData,
@@ -322,8 +447,8 @@ export default function App() {
       createdAt: new Date().toISOString().split('T')[0]
     };
     setLeads([newLead, ...leads]);
-    setIsNewLeadOpen(false);
-    setActiveDetailEntity(newLead);
+    setActiveDetailEntity(null);
+    setCurrentView('apps_grid');
   };
 
   // Save Stage Colors for Deals
@@ -440,7 +565,7 @@ export default function App() {
       status: 'upcoming'
     };
     setMeetings([meet, ...meetings]);
-    
+
     handleAddCalendarEvent({
       title: meet.title,
       start: `${meet.scheduledDate}T10:00:00`,
@@ -485,7 +610,7 @@ export default function App() {
   };
 
   // Filtered lists if search query is active
-  const filteredDeals = searchQuery 
+  const filteredDeals = searchQuery
     ? deals.filter(d => d.title.toLowerCase().includes(searchQuery.toLowerCase()) || d.company.toLowerCase().includes(searchQuery.toLowerCase()))
     : deals;
 
@@ -512,7 +637,7 @@ export default function App() {
   };
 
   return (
-    <div className={`flex h-screen bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 font-sans overflow-hidden ${theme === 'dark' ? 'dark' : ''} transition-colors duration-200`}>
+    <div className={`flex h-screen bg-slate-100 dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 font-sans overflow-hidden ${theme === 'dark' ? 'dark' : ''} transition-colors duration-200`}>
       {/* Left Sidebar - hidden on homepage */}
       {currentView !== 'apps_grid' && (
         <Sidebar
@@ -525,8 +650,6 @@ export default function App() {
           openHighThinking={() => { setSelectedDealForHighThinking(deals[0]); setIsHighThinkingOpen(true); }}
           unreadEmailsCount={unreadEmailsCount}
           activeDealsCount={activeDealsCount}
-          isCollapsed={isSidebarCollapsed}
-          onToggleCollapse={() => setIsSidebarCollapsed(prev => !prev)}
           onOpenCrmSettings={() => setCurrentView('settings')}
           installedApps={apps}
           onNavigateToAppsHub={handleGoHome}
@@ -547,10 +670,10 @@ export default function App() {
             currentView={currentView}
             searchQuery={searchQuery}
             onSearch={setSearchQuery}
-            onOpenNewDeal={() => setIsNewDealOpen(true)}
-            onOpenNewLead={handleOpenNewLeadFullPage}
-            onOpenNewInvoice={() => setIsNewInvoiceOpen(true)}
-            onOpenNewMeeting={() => setCurrentView('meet')}
+            onOpenNewDeal={handleGoHome}
+            onOpenNewLead={handleGoHome}
+            onOpenNewInvoice={handleGoHome}
+            onOpenNewMeeting={handleGoHome}
             onOpenAiChat={() => setIsAiChatOpen(true)}
             onOpenHighThinking={() => { setSelectedDealForHighThinking(deals[0]); setIsHighThinkingOpen(true); }}
             onOpenCrmSettings={() => setCurrentView('settings')}
@@ -574,7 +697,7 @@ export default function App() {
         )}
 
         {/* View Switcher Container */}
-        <main className={`flex-1 overflow-y-auto ${currentView === 'apps_grid' ? 'bg-transparent' : 'bg-[#fbf9f4] dark:bg-[#0b0f19]'} kanban-scroll transition-colors duration-200`}>
+        <main className={`flex-1 overflow-y-auto ${currentView === 'apps_grid' ? 'bg-transparent' : 'bg-slate-50/95 dark:bg-[#0b0f19]'} kanban-scroll transition-colors duration-200`}>
           {activeDetailEntity ? (
             <LeadDetailPage
               leadOrDeal={activeDetailEntity}
@@ -607,9 +730,9 @@ export default function App() {
                   onLaunchApp={handleLaunchApp}
                   onOpenAppStore={() => setCurrentView('app_store')}
                   onOpenSettings={() => setCurrentView('settings')}
-                  onOpenNewLead={handleOpenNewLeadFullPage}
-                  onOpenNewDeal={() => setIsNewDealOpen(true)}
-                  onOpenNewInvoice={() => setIsNewInvoiceOpen(true)}
+                  onOpenNewLead={handleGoHome}
+                  onOpenNewDeal={handleGoHome}
+                  onOpenNewInvoice={handleGoHome}
                   pipelineTotal={pipelineTotal}
                   activeDealsCount={activeDealsCount}
                   theme={theme}
@@ -632,45 +755,43 @@ export default function App() {
               {/* Installed Modules */}
               {currentView === 'sales_orders' && (
                 <div className="p-6 lg:p-10 max-w-7xl mx-auto">
-                  <SalesAppView 
-                    onOpenNewDeal={() => setIsNewDealOpen(true)}
+                  <SalesAppView
+                    onOpenNewDeal={handleGoHome}
                     onOpenInvoice={() => setCurrentView('invoices')}
                   />
                 </div>
               )}
 
-              {currentView === 'inventory_stock' && (
+              {currentView === 'purchase' && (
                 <div className="p-6 lg:p-10 max-w-7xl mx-auto">
-                  <InventoryAppView />
+                  <PurchaseAppView />
                 </div>
               )}
 
-              {currentView === 'project_tasks' && (
+              {currentView === 'accounting' && (
                 <div className="p-6 lg:p-10 max-w-7xl mx-auto">
-                  <ProjectsAppView />
+                  <AccountingAppView />
                 </div>
               )}
 
-              {currentView === 'hr_employees' && (
+              {currentView === 'pos' && (
                 <div className="p-6 lg:p-10 max-w-7xl mx-auto">
-                  <HrAppView />
-                </div>
-              )}
-
-              {currentView === 'helpdesk_tickets' && (
-                <div className="p-6 lg:p-10 max-w-7xl mx-auto">
-                  <HelpdeskAppView />
+                  <PosAppView />
                 </div>
               )}
 
               {currentView === 'settings' && (
                 <div className="p-6 lg:p-10 max-w-7xl mx-auto">
-                  <SettingsAppView 
+                  <SettingsAppView
                     stageColors={stageConfigs}
                     onUpdateStageColors={handleSaveStageConfigs}
                     theme={theme}
                     onToggleTheme={toggleTheme}
                     onSetTheme={setTheme}
+                    dummyDataEnabled={dummyDataEnabled}
+                    dummyDataDeleted={dummyDataDeleted}
+                    onToggleDummyData={handleToggleDummyData}
+                    onDeleteDummyData={handleDeleteDummyData}
                   />
                 </div>
               )}
@@ -694,7 +815,7 @@ export default function App() {
                   deals={filteredDeals}
                   stageConfigs={stageConfigs}
                   onUpdateDealStage={handleUpdateDealStage}
-                  onOpenNewDeal={() => setIsNewDealOpen(true)}
+                  onOpenNewDeal={handleGoHome}
                   onOpenDealDetail={(deal) => setActiveDetailEntity(deal)}
                   onComposeEmailToContact={handleComposeEmailToContact}
                   onLaunchMeetingWithContact={handleLaunchMeetingWithContact}
@@ -708,7 +829,7 @@ export default function App() {
                 <LeadsView
                   leads={leads}
                   stageConfigs={leadStageConfigs}
-                  onOpenNewLead={handleOpenNewLeadFullPage}
+                  onOpenNewLead={handleGoHome}
                   onOpenLeadDetail={(lead) => setActiveDetailEntity(lead)}
                   onConvertLeadToDeal={handleConvertLeadToDeal}
                   onComposeEmail={handleComposeEmailToContact}
@@ -723,7 +844,7 @@ export default function App() {
               {currentView === 'contacts' && (
                 <ContactsView
                   contacts={contacts}
-                  onOpenNewContact={() => setIsNewContactOpen(true)}
+                  onOpenNewContact={handleGoHome}
                   onComposeEmail={handleComposeEmailToContact}
                   onLaunchMeeting={handleLaunchMeetingWithContact}
                   onLocateOnMap={handleLocateOnMap}
@@ -734,7 +855,7 @@ export default function App() {
               {currentView === 'accounts' && (
                 <AccountsView
                   accounts={accounts}
-                  onOpenNewAccount={() => setIsNewContactOpen(true)}
+                  onOpenNewAccount={handleGoHome}
                   onLocateOnMap={handleLocateOnMap}
                   onRunAiAccountAudit={(acc) => setIsAiChatOpen(true)}
                 />
@@ -743,7 +864,7 @@ export default function App() {
               {currentView === 'invoices' && (
                 <InvoicesView
                   invoices={invoices}
-                  onOpenNewInvoice={() => setIsNewInvoiceOpen(true)}
+                  onOpenNewInvoice={handleGoHome}
                   onUpdateInvoiceStatus={handleUpdateInvoiceStatus}
                   onAuditInvoiceWithAi={(inv) => setIsAiChatOpen(true)}
                 />
@@ -822,31 +943,7 @@ export default function App() {
         preSelectedDeal={selectedDealForHighThinking}
       />
 
-      {/* Creation & Detail Modals */}
-      <NewDealModal
-        isOpen={isNewDealOpen}
-        onClose={() => setIsNewDealOpen(false)}
-        onCreateDeal={handleCreateDeal}
-      />
-
-      <NewLeadModal
-        isOpen={isNewLeadOpen}
-        onClose={() => setIsNewLeadOpen(false)}
-        onCreateLead={handleCreateLead}
-      />
-
-      <NewContactModal
-        isOpen={isNewContactOpen}
-        onClose={() => setIsNewContactOpen(false)}
-        onCreateContact={handleCreateContact}
-      />
-
-      <NewInvoiceModal
-        isOpen={isNewInvoiceOpen}
-        onClose={() => setIsNewInvoiceOpen(false)}
-        onCreateInvoice={handleCreateInvoice}
-      />
-
+      {/* Creation modals removed: all create actions redirect to the main page */}
       <DealDetailModal
         deal={selectedDealForDetail}
         isOpen={!!selectedDealForDetail}

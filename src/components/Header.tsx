@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  Search, 
-  Plus, 
-  HelpCircle, 
-  Sparkles, 
-  BrainCircuit, 
-  Bot, 
-  Kanban, 
-  UserCheck, 
-  Receipt, 
-  Video, 
+import {
+  Search,
+  Plus,
+  HelpCircle,
+  Sparkles,
+  BrainCircuit,
+  Bot,
+  Kanban,
+  UserCheck,
+  Receipt,
+  Video,
   SlidersHorizontal,
   ChevronDown,
   ChevronRight,
@@ -72,7 +72,6 @@ export const Header: React.FC<HeaderProps> = ({
   theme = 'light',
   onToggleTheme
 }) => {
-  const [showQuickMenu, setShowQuickMenu] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // Formatted date subtitle matching screenshot
@@ -113,22 +112,22 @@ export const Header: React.FC<HeaderProps> = ({
     if (activeDetailEntity) {
       const isLead = 'temperature' in activeDetailEntity || 'status' in activeDetailEntity;
       const entityName = activeDetailEntity.company || ('title' in activeDetailEntity ? (activeDetailEntity as Deal).title : 'Lead Details');
-      
+
       return [
-        { 
-          label: 'CRM', 
-          onClick: handleNavigateCrm, 
-          title: 'Go to CRM Pipeline & Overview' 
+        {
+          label: 'CRM',
+          onClick: handleNavigateCrm,
+          title: 'Go to CRM Pipeline & Overview'
         },
-        { 
-          label: isLead ? 'Lead' : 'Deal', 
-          onClick: isLead ? handleNavigateLeads : handleNavigateCrm, 
-          title: isLead ? 'Go to Leads List' : 'Go to Pipeline Deals' 
+        {
+          label: isLead ? 'Lead' : 'Deal',
+          onClick: isLead ? handleNavigateLeads : handleNavigateCrm,
+          title: isLead ? 'Go to Leads List' : 'Go to Pipeline Deals'
         },
-        { 
-          label: entityName, 
-          isCurrent: true, 
-          title: entityName 
+        {
+          label: entityName,
+          isCurrent: true,
+          title: entityName
         }
       ];
     }
@@ -162,33 +161,23 @@ export const Header: React.FC<HeaderProps> = ({
         ];
       case 'invoices':
         return [
-          { label: 'CRM', onClick: handleNavigateCrm, title: 'CRM Overview' },
+          { label: 'Sales', onClick: () => onSelectView?.('sales_orders'), title: 'Sales Module' },
           { label: 'Invoices & Billing', isCurrent: true }
         ];
       case 'sales_orders':
         return [
           { label: 'Sales', onClick: () => onSelectView?.('sales_orders'), title: 'Sales Module' },
-          { label: 'Sales Orders', isCurrent: true }
+          { label: 'Quotation to Invoice', isCurrent: true }
         ];
-      case 'inventory_stock':
+      case 'purchase':
         return [
-          { label: 'Inventory', onClick: () => onSelectView?.('inventory_stock'), title: 'Inventory Module' },
-          { label: 'Stock & Warehouses', isCurrent: true }
+          { label: 'Purchase', onClick: () => onSelectView?.('purchase'), title: 'Purchase Module' },
+          { label: 'RFQ, PO, GRN, Invoice, Payment', isCurrent: true }
         ];
-      case 'project_tasks':
+      case 'accounting':
         return [
-          { label: 'Projects', onClick: () => onSelectView?.('project_tasks'), title: 'Projects Module' },
-          { label: 'Tasks & Sprints', isCurrent: true }
-        ];
-      case 'hr_employees':
-        return [
-          { label: 'Human Resources', onClick: () => onSelectView?.('hr_employees'), title: 'HR Module' },
-          { label: 'Employee Directory', isCurrent: true }
-        ];
-      case 'helpdesk_tickets':
-        return [
-          { label: 'Helpdesk', onClick: () => onSelectView?.('helpdesk_tickets'), title: 'Helpdesk Module' },
-          { label: 'Support Queue', isCurrent: true }
+          { label: 'Accounting', onClick: () => onSelectView?.('accounting'), title: 'Accounting Module' },
+          { label: 'COA, JV, Reconciliation, Reports', isCurrent: true }
         ];
       case 'gmail':
         return [
@@ -243,7 +232,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <span className="text-slate-300 dark:text-slate-650 font-light text-xs shrink-0 select-none">/</span>
                   )}
                   {isLast ? (
-                    <span 
+                    <span
                       id={`breadcrumb-current-page`}
                       className="font-serif text-base lg:text-xl font-bold text-slate-900 dark:text-white truncate tracking-tight"
                       title={crumb.label}
@@ -290,89 +279,17 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
-        {/* + New Lead Dark Pill Button with Dropdown */}
-        <div className="relative flex items-center">
-          <div className="flex items-center bg-[#1c2237] hover:bg-[#28304c] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded-full shadow-xs transition-all divide-x divide-slate-700 dark:divide-emerald-700">
-            <button
-              id="header-new-lead-btn"
-              onClick={onOpenNewLead}
-              className="flex items-center space-x-1.5 pl-3.5 pr-2.5 py-2 text-xs font-semibold hover:text-emerald-300 transition-colors cursor-pointer"
-              title="Add & Redirect to New Lead Dossier"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>New lead</span>
-            </button>
-            <button
-              onClick={() => setShowQuickMenu(!showQuickMenu)}
-              className="px-2 py-2 text-slate-400 dark:text-white/80 hover:text-white transition-colors cursor-pointer"
-              title="More Actions"
-            >
-              <ChevronDown className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {showQuickMenu && (
-            <>
-              <div 
-                className="fixed inset-0 z-20" 
-                onClick={() => setShowQuickMenu(false)} 
-              />
-              <div className="absolute right-0 top-full mt-2 w-60 bg-white dark:bg-[#182138] border border-slate-200/90 dark:border-slate-700 rounded-2xl shadow-xl dark:shadow-2xl z-30 py-2 text-slate-700 dark:text-slate-200 animate-in fade-in zoom-in-95 duration-150 origin-top-right transition-all">
-                <div className="px-3.5 py-1 text-[10px] uppercase font-bold text-slate-400 dark:text-slate-400 tracking-wider">
-                  Quick Create
-                </div>
-                <button
-                  onClick={() => { setShowQuickMenu(false); onOpenNewLead(); }}
-                  className="w-full px-3.5 py-2.5 text-left text-xs font-semibold hover:bg-emerald-50/70 dark:hover:bg-emerald-950/40 hover:text-emerald-900 dark:hover:text-emerald-300 flex items-center space-x-2.5 text-slate-700 dark:text-slate-200 transition-colors duration-150 rounded-xl mx-auto cursor-pointer"
-                >
-                  <div className="w-6 h-6 rounded-lg bg-emerald-100/80 dark:bg-emerald-900/60 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
-                    <UserCheck className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <div className="font-bold">New Lead (Full Dossier)</div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Open full dossier like Aurora House</div>
-                  </div>
-                </button>
-                <button
-                  onClick={() => { setShowQuickMenu(false); onOpenNewDeal(); }}
-                  className="w-full px-3.5 py-2.5 text-left text-xs font-semibold hover:bg-indigo-50/70 dark:hover:bg-indigo-950/40 hover:text-indigo-900 dark:hover:text-indigo-300 flex items-center space-x-2.5 text-slate-700 dark:text-slate-200 transition-colors duration-150 rounded-xl mx-auto cursor-pointer"
-                >
-                  <div className="w-6 h-6 rounded-lg bg-indigo-100/80 dark:bg-indigo-900/60 flex items-center justify-center text-indigo-700 dark:text-indigo-300">
-                    <Kanban className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <div className="font-bold">New Deal / Opportunity</div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Add straight to pipeline stages</div>
-                  </div>
-                </button>
-                <button
-                  onClick={() => { setShowQuickMenu(false); onOpenNewInvoice(); }}
-                  className="w-full px-3.5 py-2.5 text-left text-xs font-semibold hover:bg-blue-50/70 dark:hover:bg-blue-950/40 hover:text-blue-900 dark:hover:text-blue-300 flex items-center space-x-2.5 text-slate-700 dark:text-slate-200 transition-colors duration-150 rounded-xl mx-auto cursor-pointer"
-                >
-                  <div className="w-6 h-6 rounded-lg bg-blue-100/80 dark:bg-blue-900/60 flex items-center justify-center text-blue-700 dark:text-blue-300">
-                    <Receipt className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <div className="font-bold">New Invoice</div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Issue billing with ERP tracking</div>
-                  </div>
-                </button>
-                <div className="border-t border-slate-100 dark:border-slate-700/60 my-1" />
-                <button
-                  onClick={() => { setShowQuickMenu(false); onOpenNewMeeting(); }}
-                  className="w-full px-3.5 py-2.5 text-left text-xs font-semibold hover:bg-amber-50/70 dark:hover:bg-amber-950/40 hover:text-amber-900 dark:hover:text-amber-300 flex items-center space-x-2.5 text-slate-700 dark:text-slate-200 transition-colors duration-150 rounded-xl mx-auto cursor-pointer"
-                >
-                  <div className="w-6 h-6 rounded-lg bg-amber-100/80 dark:bg-amber-900/60 flex items-center justify-center text-amber-700 dark:text-amber-300">
-                    <Video className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <div className="font-bold">Schedule Google Meet</div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Generate secure Meet link</div>
-                  </div>
-                </button>
-              </div>
-            </>
-          )}
+        {/* Direct redirect buttons without any popup / drawer */}
+        <div className="flex items-center">
+          <button
+            id="header-new-lead-btn"
+            onClick={onOpenNewLead}
+            className="flex items-center space-x-1.5 pl-3.5 pr-3 py-2 text-xs font-semibold bg-[#1c2237] hover:bg-[#28304c] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded-full shadow-xs transition-all cursor-pointer"
+            title="Redirect to main page"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New lead</span>
+          </button>
         </div>
 
         {/* High Thinking AI Button */}
@@ -399,9 +316,9 @@ export const Header: React.FC<HeaderProps> = ({
 
           {isProfileOpen && (
             <>
-              <div 
-                className="fixed inset-0 z-40" 
-                onClick={() => setIsProfileOpen(false)} 
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setIsProfileOpen(false)}
               />
               <div className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-[#161e33] border border-slate-200/90 dark:border-slate-700 rounded-3xl shadow-2xl z-50 p-4 text-slate-700 dark:text-slate-200 animate-in fade-in zoom-in-95 duration-150 origin-top-right transition-all">
                 <div className="flex items-center space-x-3 pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -457,11 +374,10 @@ export const Header: React.FC<HeaderProps> = ({
                         onClick={() => {
                           if (theme === 'dark' && onToggleTheme) onToggleTheme();
                         }}
-                        className={`py-1 px-2 rounded-lg text-xs font-bold flex items-center justify-center space-x-1 transition-all cursor-pointer ${
-                          theme === 'light'
-                            ? 'bg-white text-slate-900 shadow-xs'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-white'
-                        }`}
+                        className={`py-1 px-2 rounded-lg text-xs font-bold flex items-center justify-center space-x-1 transition-all cursor-pointer ${theme === 'light'
+                          ? 'bg-white text-slate-900 shadow-xs'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-white'
+                          }`}
                       >
                         <Sun className="w-3 h-3 text-amber-500" />
                         <span>Light</span>
@@ -471,11 +387,10 @@ export const Header: React.FC<HeaderProps> = ({
                         onClick={() => {
                           if (theme === 'light' && onToggleTheme) onToggleTheme();
                         }}
-                        className={`py-1 px-2 rounded-lg text-xs font-bold flex items-center justify-center space-x-1 transition-all cursor-pointer ${
-                          theme === 'dark'
-                            ? 'bg-slate-800 text-white shadow-xs'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-white'
-                        }`}
+                        className={`py-1 px-2 rounded-lg text-xs font-bold flex items-center justify-center space-x-1 transition-all cursor-pointer ${theme === 'dark'
+                          ? 'bg-slate-800 text-white shadow-xs'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-white'
+                          }`}
                       >
                         <Moon className="w-3 h-3 text-amber-400" />
                         <span>Dark</span>

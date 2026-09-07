@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { 
-  Settings, 
-  Building2, 
-  Layers, 
-  Palette, 
-  Shield, 
-  BrainCircuit, 
-  Globe, 
-  Save, 
-  Check, 
+import React, { useState, useEffect } from 'react';
+import {
+  Settings,
+  Building2,
+  Layers,
+  Palette,
+  Shield,
+  BrainCircuit,
+  Globe,
+  Save,
+  Check,
   Sparkles,
   Video,
   Mail,
@@ -27,6 +27,10 @@ interface SettingsAppViewProps {
   theme?: ThemeMode;
   onToggleTheme?: () => void;
   onSetTheme?: (theme: ThemeMode) => void;
+  dummyDataEnabled?: boolean;
+  dummyDataDeleted?: boolean;
+  onToggleDummyData?: (enabled: boolean) => void;
+  onDeleteDummyData?: () => void;
 }
 
 export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
@@ -34,33 +38,105 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
   onUpdateStageColors,
   theme = 'light',
   onToggleTheme,
-  onSetTheme
+  onSetTheme,
+  dummyDataEnabled = false,
+  dummyDataDeleted = false,
+  onToggleDummyData,
+  onDeleteDummyData
 }) => {
   const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'pipeline' | 'google' | 'ai' | 'security'>('general');
   const [isSaved, setIsSaved] = useState(false);
 
   // Form states
   const [companyName, setCompanyName] = useState('Navastra Enterprise Inc');
+  const [companyCountry, setCompanyCountry] = useState('India');
   const [currency, setCurrency] = useState('USD ($)');
   const [timezone, setTimezone] = useState('America/Los_Angeles (PST)');
-  const [fiscalYear, setFiscalYear] = useState('January 1 - December 31');
-  const [aiModel, setAiModel] = useState('gemini-3.5-flash');
+  const [fiscalYear, setFiscalYear] = useState('April 1 - March 31');
+  const [coaMode, setCoaMode] = useState<'basic' | 'import'>('basic');
+  const [adminPassword, setAdminPassword] = useState('Navastra');
+  const [aiModel, setAiModel] = useState('gemini-2.5-flash');
   const [enableThinking, setEnableThinking] = useState(true);
+  const [dbSettings, setDbSettings] = useState({
+    enabled: false,
+    host: 'localhost',
+    port: 5432,
+    database: 'navastra_erp',
+    user: 'postgres',
+    password: 'postgres',
+    ssl: false,
+  });
+  const [aiSettings, setAiSettings] = useState({
+    enabled: false,
+    provider: 'gemini',
+    model: 'gemini-2.5-flash',
+    apiKey: '',
+    bearerToken: '',
+    tokenHeader: 'Authorization',
+    baseUrl: 'https://generativelanguage.googleapis.com',
+  });
+  const [securityKey, setSecurityKey] = useState('');
+
+  useEffect(() => {
+    fetch('/api/config')
+      .then(async (res) => {
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data?.database) setDbSettings(data.database);
+        if (data?.ai) {
+          setAiSettings(data.ai);
+          setAiModel(data.ai.model || 'gemini-2.5-flash');
+        }
+        if (data?.securityKey) setSecurityKey(data.securityKey);
+        if (data?.companyName) setCompanyName(data.companyName);
+        if (data?.companyCountry) setCompanyCountry(data.companyCountry);
+        if (data?.fiscalYear) setFiscalYear(data.fiscalYear);
+        if (data?.chartOfAccountsMode) setCoaMode(data.chartOfAccountsMode);
+        if (data?.adminUsername) setAdminPassword(data.adminPassword || 'Navastra');
+        if (data?.adminPassword) setAdminPassword(data.adminPassword);
+      })
+      .catch(() => undefined);
+  }, []);
 
   // Stage colors state
   const [stages, setStages] = useState<StageColorConfig[]>(stageColors);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (onUpdateStageColors) {
       onUpdateStageColors(stages);
     }
+
+    try {
+      const response = await fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          database: dbSettings,
+          ai: { ...aiSettings, model: aiModel || aiSettings.model },
+          securityKey: securityKey.trim(),
+          companyName: companyName.trim() || 'Navastra Enterprise Inc',
+          companyCountry: companyCountry.trim() || 'India',
+          fiscalYear: fiscalYear.trim() || 'April 1 - March 31',
+          chartOfAccountsMode: coaMode,
+          adminUsername: 'Administration',
+          adminPassword: adminPassword.trim() || 'Navastra'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save ERP configuration');
+      }
+    } catch (error) {
+      console.error('Failed to persist ERP settings:', error);
+    }
+
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
   };
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto animate-in fade-in duration-200">
-      
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#111627] p-6 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-2xs transition-colors">
         <div className="space-y-1">
@@ -87,9 +163,8 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
       <div className="flex items-center space-x-2 bg-white dark:bg-[#111627] p-1.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-x-auto transition-colors">
         <button
           onClick={() => setActiveTab('general')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'general' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'general' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
         >
           <Building2 className="w-3.5 h-3.5" />
           <span>General & Company</span>
@@ -97,9 +172,8 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
 
         <button
           onClick={() => setActiveTab('appearance')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'appearance' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'appearance' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
         >
           <Sun className="w-3.5 h-3.5 text-amber-500" />
           <span>Theme & Appearance</span>
@@ -107,9 +181,8 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
 
         <button
           onClick={() => setActiveTab('pipeline')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'pipeline' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'pipeline' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
         >
           <Palette className="w-3.5 h-3.5" />
           <span>Pipeline Stages & Colors</span>
@@ -117,9 +190,8 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
 
         <button
           onClick={() => setActiveTab('google')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'google' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'google' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
         >
           <Globe className="w-3.5 h-3.5 text-red-500" />
           <span>Google Workspace</span>
@@ -127,9 +199,8 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
 
         <button
           onClick={() => setActiveTab('ai')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'ai' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'ai' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
         >
           <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
           <span>Gemini AI Models</span>
@@ -137,9 +208,8 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
 
         <button
           onClick={() => setActiveTab('security')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'security' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-          }`}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'security' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
         >
           <Shield className="w-3.5 h-3.5" />
           <span>Security & Roles</span>
@@ -148,7 +218,7 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
 
       {/* Tab Content Panes */}
       <div className="bg-white dark:bg-[#111627] rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-6 transition-colors">
-        
+
         {/* Appearance & Theme Tab */}
         {activeTab === 'appearance' && (
           <div className="space-y-6">
@@ -159,13 +229,12 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Light Mode Card */}
-              <div 
+              <div
                 onClick={() => onSetTheme ? onSetTheme('light') : onToggleTheme && theme === 'dark' && onToggleTheme()}
-                className={`p-5 rounded-2xl border-2 transition-all cursor-pointer select-none ${
-                  theme === 'light'
-                    ? 'border-emerald-500 bg-emerald-50/50 shadow-md'
-                    : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700'
-                }`}
+                className={`p-5 rounded-2xl border-2 transition-all cursor-pointer select-none ${theme === 'light'
+                  ? 'border-emerald-500 bg-emerald-50/50 shadow-md'
+                  : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700'
+                  }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-2.5">
@@ -193,13 +262,12 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
               </div>
 
               {/* Dark Mode Card */}
-              <div 
+              <div
                 onClick={() => onSetTheme ? onSetTheme('dark') : onToggleTheme && theme === 'light' && onToggleTheme()}
-                className={`p-5 rounded-2xl border-2 transition-all cursor-pointer select-none ${
-                  theme === 'dark'
-                    ? 'border-emerald-500 bg-emerald-950/20 shadow-md'
-                    : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700'
-                }`}
+                className={`p-5 rounded-2xl border-2 transition-all cursor-pointer select-none ${theme === 'dark'
+                  ? 'border-emerald-500 bg-emerald-950/20 shadow-md'
+                  : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700'
+                  }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-2.5">
@@ -233,7 +301,7 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         {activeTab === 'general' && (
           <div className="space-y-5">
             <h3 className="text-base font-bold text-slate-900 dark:text-white">Organization & Currency</h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">ERP System & Enterprise Name</label>
@@ -241,6 +309,16 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
                   type="text"
                   value={companyName}
                   onChange={e => setCompanyName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Country</label>
+                <input
+                  type="text"
+                  value={companyCountry}
+                  onChange={e => setCompanyCountry(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
@@ -261,6 +339,16 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
               </div>
 
               <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Fiscal Calendar Year</label>
+                <input
+                  type="text"
+                  value={fiscalYear}
+                  onChange={e => setFiscalYear(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                />
+              </div>
+
+              <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">System Timezone</label>
                 <input
                   type="text"
@@ -271,11 +359,33 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Fiscal Calendar Year</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Chart of Accounts Setup</label>
+                <select
+                  value={coaMode}
+                  onChange={e => setCoaMode(e.target.value as 'basic' | 'import')}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                >
+                  <option value="basic">Basic COA Template</option>
+                  <option value="import">Import COA File</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Login User</label>
                 <input
                   type="text"
-                  value={fiscalYear}
-                  onChange={e => setFiscalYear(e.target.value)}
+                  value="Administration"
+                  readOnly
+                  className="w-full px-3.5 py-2.5 bg-slate-100 dark:bg-[#111827] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 cursor-not-allowed"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Administration Password</label>
+                <input
+                  type="text"
+                  value={adminPassword}
+                  onChange={e => setAdminPassword(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
@@ -295,7 +405,7 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
               {stages.map((st, idx) => (
                 <div key={st.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#182138] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
                   <div className="flex items-center space-x-3">
-                    <span 
+                    <span
                       style={{ backgroundColor: st.color }}
                       className="w-4 h-4 rounded-full shrink-0 shadow-sm"
                     />
@@ -306,15 +416,15 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <span 
+                    <span
                       style={{ backgroundColor: st.badgeBg, color: st.badgeText }}
                       className="px-2.5 py-0.5 rounded-full text-[10px] font-bold"
                     >
                       Sample Badge
                     </span>
-                    <input 
-                      type="color" 
-                      value={st.color} 
+                    <input
+                      type="color"
+                      value={st.color}
                       onChange={e => {
                         const updated = [...stages];
                         updated[idx].color = e.target.value;
@@ -333,7 +443,7 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         {activeTab === 'google' && (
           <div className="space-y-5">
             <h3 className="text-base font-bold text-slate-900 dark:text-white">Google Workspace Integrations</h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-[#182138] space-y-2">
                 <div className="flex items-center justify-between">
@@ -368,7 +478,7 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         {activeTab === 'ai' && (
           <div className="space-y-5">
             <h3 className="text-base font-bold text-slate-900 dark:text-white">Gemini Intelligence Engine</h3>
-            
+
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Default Model</label>
@@ -404,6 +514,65 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
           <div className="space-y-5">
             <h3 className="text-base font-bold text-slate-900 dark:text-white">User Roles & Access Control</h3>
             <div className="text-xs text-slate-600 dark:text-slate-300 space-y-2">
+              <div className="p-4 bg-slate-50 dark:bg-[#182138] rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-bold text-slate-800 dark:text-white">Master Decryption Key</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400">Required to decrypt ERP data and company records.</div>
+                  </div>
+                  <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded text-[10px] font-bold">AES-256</span>
+                </div>
+                <input
+                  type="text"
+                  value={securityKey}
+                  onChange={(e) => setSecurityKey(e.target.value.toUpperCase())}
+                  maxLength={21}
+                  placeholder="Enter 21-character alphanumeric key"
+                  className="w-full px-3.5 py-2.5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                />
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">The key must be exactly 21 alphanumeric characters. Without the correct key, stored ERP data remains encrypted and unreadable.</p>
+              </div>
+
+              <div className="p-3 bg-slate-50 dark:bg-[#182138] rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-slate-800 dark:text-white">Default Login</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Administration / Navastra</div>
+                </div>
+                <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded text-[10px] font-bold">Always Primary</span>
+              </div>
+
+              <div className="p-4 bg-slate-50 dark:bg-[#182138] rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-bold text-slate-800 dark:text-white">Demo / Dummy Data</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400">Toggle ERPNext-style starter records for the system.</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onToggleDummyData && onToggleDummyData(!dummyDataEnabled)}
+                    disabled={dummyDataDeleted}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${dummyDataDeleted ? 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed' : dummyDataEnabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'} `}
+                    aria-label="Toggle dummy data"
+                  >
+                    <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${dummyDataEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                    {dummyDataDeleted ? 'All dummy records have been permanently removed.' : dummyDataEnabled ? 'Dummy data is active in the workspace.' : 'Dummy data is disabled.'}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={onDeleteDummyData}
+                    disabled={dummyDataDeleted}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${dummyDataDeleted ? 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed' : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/60 cursor-pointer'}`}
+                  >
+                    {dummyDataDeleted ? 'Deleted Permanently' : 'Delete Dummy Data'}
+                  </button>
+                </div>
+              </div>
+
               <div className="p-3 bg-slate-50 dark:bg-[#182138] rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
                   <div className="font-bold text-slate-800 dark:text-white">Admin Role</div>
@@ -413,10 +582,10 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
               </div>
               <div className="p-3 bg-slate-50 dark:bg-[#182138] rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-slate-800 dark:text-white">Sales Executive</div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Create leads, manage assigned pipeline deals, view calendar</div>
+                  <div className="font-bold text-slate-800 dark:text-white">Sales Team</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Access CRM pipeline, sales orders, quotations, and customer follow-up workflows</div>
                 </div>
-                <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded text-[10px] font-bold">14 Users</span>
+                <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded text-[10px] font-bold">CRM + Sales</span>
               </div>
             </div>
           </div>

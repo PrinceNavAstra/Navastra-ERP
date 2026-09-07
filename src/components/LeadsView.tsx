@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  Plus, 
-  Search, 
-  Sparkles, 
-  Mail, 
-  Video, 
-  MapPin, 
-  ArrowRight, 
-  Building2, 
-  Phone, 
-  Flame, 
+import {
+  Plus,
+  Search,
+  Sparkles,
+  Mail,
+  Video,
+  MapPin,
+  ArrowRight,
+  Building2,
+  Phone,
+  Flame,
   CheckCircle2,
   Filter,
   SlidersHorizontal,
@@ -29,45 +29,45 @@ import confetti from 'canvas-confetti';
 import { Lead, LeadStatus, LeadTemperature, LeadStageColorConfig } from '../types';
 
 export const defaultLeadStages: LeadStageColorConfig[] = [
-  { 
-    id: 'New', 
-    label: 'Created / New', 
+  {
+    id: 'New',
+    label: 'Created / New',
     color: '#00a5e5', // Sky Blue / Cyan (Matches Screenshot Column 1)
-    badgeBg: '#e0f2fe', 
-    badgeText: '#0284c7', 
-    barColor: '#0ea5e9' 
+    badgeBg: '#e0f2fe',
+    badgeText: '#0284c7',
+    barColor: '#0ea5e9'
   },
-  { 
-    id: 'Contacted', 
-    label: 'Contacted / Sent', 
+  {
+    id: 'Contacted',
+    label: 'Contacted / Sent',
     color: '#f59e0b', // Amber / Orange (Matches Screenshot Column 3)
-    badgeBg: '#fef3c7', 
-    badgeText: '#b45309', 
-    barColor: '#fbbf24' 
+    badgeBg: '#fef3c7',
+    badgeText: '#b45309',
+    barColor: '#fbbf24'
   },
-  { 
-    id: 'Qualified', 
-    label: 'Qualified Lead', 
+  {
+    id: 'Qualified',
+    label: 'Qualified Lead',
     color: '#6366f1', // Indigo / Purple
-    badgeBg: '#e0e7ff', 
-    badgeText: '#4338ca', 
-    barColor: '#818cf8' 
+    badgeBg: '#e0e7ff',
+    badgeText: '#4338ca',
+    barColor: '#818cf8'
   },
-  { 
-    id: 'Proposal', 
-    label: 'Proposal / Active', 
+  {
+    id: 'Proposal',
+    label: 'Proposal / Active',
     color: '#22c55e', // Vibrant Green / Paid (Matches Screenshot Column 4)
-    badgeBg: '#dcfce7', 
-    badgeText: '#15803d', 
-    barColor: '#4ade80' 
+    badgeBg: '#dcfce7',
+    badgeText: '#15803d',
+    barColor: '#4ade80'
   },
-  { 
-    id: 'Unqualified', 
-    label: 'Cancel / Lost', 
+  {
+    id: 'Unqualified',
+    label: 'Cancel / Lost',
     color: '#f87171', // Coral Red / Cancel (Matches Screenshot Column 2)
-    badgeBg: '#fee2e2', 
-    badgeText: '#b91c1c', 
-    barColor: '#ef4444' 
+    badgeBg: '#fee2e2',
+    badgeText: '#b91c1c',
+    barColor: '#ef4444'
   },
 ];
 
@@ -195,11 +195,11 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
   const totalLeadsValue = filteredLeads.reduce((sum, l) => sum + l.estimatedValue, 0);
 
   return (
-    <div className="p-4 md:p-6 space-y-4 max-w-full mx-auto h-[calc(100vh-4.5rem)] flex flex-col overflow-hidden bg-[#f4f6f8] dark:bg-[#0b0f19] transition-colors duration-200">
-      
+    <div className="p-4 md:p-6 space-y-4 max-w-full mx-auto h-[calc(100vh-4.5rem)] flex flex-col overflow-hidden bg-slate-100/90 dark:bg-[#0b0f19] transition-colors duration-200">
+
       {/* Top Quick Filters Bar - Matches Reference Screenshot Layout */}
       <div className="bg-white dark:bg-[#111627] p-3 rounded-2xl border border-slate-250 dark:border-slate-800 shadow-2xs flex flex-wrap items-center justify-between gap-3 shrink-0 transition-colors">
-        
+
         {/* Quick Filters label & input fields */}
         <div className="flex flex-wrap items-center gap-3 flex-1 min-w-[320px]">
           <div className="flex items-center space-x-2 text-[11px] font-bold tracking-wider uppercase text-slate-500 dark:text-slate-400 shrink-0">
@@ -254,8 +254,8 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
             <Palette className="w-3 h-3 text-slate-400 mr-1" />
             <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">Stages:</span>
             {stages.map(s => (
-              <span 
-                key={s.id} 
+              <span
+                key={s.id}
                 style={{ backgroundColor: s.color }}
                 className="w-2.5 h-2.5 rounded-full inline-block shadow-2xs"
                 title={`${s.label}: ${s.color}`}
@@ -269,22 +269,20 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
           <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-250 dark:border-slate-700">
             <button
               onClick={() => setViewMode('kanban')}
-              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'kanban' 
-                  ? 'bg-white dark:bg-[#111627] text-slate-900 dark:text-white shadow-2xs' 
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${viewMode === 'kanban'
+                  ? 'bg-white dark:bg-[#111627] text-slate-900 dark:text-white shadow-2xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
-              }`}
+                }`}
             >
               <KanbanIcon className="w-3.5 h-3.5" />
               <span>Kanban</span>
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'table' 
-                  ? 'bg-white dark:bg-[#111627] text-slate-900 dark:text-white shadow-2xs' 
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${viewMode === 'table'
+                  ? 'bg-white dark:bg-[#111627] text-slate-900 dark:text-white shadow-2xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
-              }`}
+                }`}
             >
               <List className="w-3.5 h-3.5" />
               <span>Table</span>
@@ -320,14 +318,13 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                   style={{
                     borderBottom: `3px solid ${stage.color}`
                   }}
-                  className={`w-72 sm:w-80 flex flex-col h-full bg-[#ebedf0]/80 dark:bg-[#151c2e]/90 rounded-xl border border-slate-300/80 dark:border-slate-800 transition-all duration-150 overflow-hidden shadow-2xs ${
-                    isDropTarget 
-                      ? 'ring-2 ring-sky-400 bg-sky-50/50 dark:bg-sky-950/40' 
+                  className={`w-72 sm:w-80 flex flex-col h-full bg-[#ebedf0]/80 dark:bg-[#151c2e]/90 rounded-xl border border-slate-300/80 dark:border-slate-800 transition-all duration-150 overflow-hidden shadow-2xs ${isDropTarget
+                      ? 'ring-2 ring-sky-400 bg-sky-50/50 dark:bg-sky-950/40'
                       : ''
-                  }`}
+                    }`}
                 >
                   {/* Solid Colored Column Header (Exact visual match to Screenshot) */}
-                  <div 
+                  <div
                     style={{ backgroundColor: stage.color }}
                     className="px-3.5 py-2.5 text-white font-bold text-xs flex items-center justify-between shrink-0 select-none shadow-xs"
                   >
@@ -345,11 +342,10 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                   {/* Cards Scrollable Container */}
                   <div className="flex-1 overflow-y-auto p-2.5 space-y-2.5 kanban-scroll">
                     {stageLeads.length === 0 ? (
-                      <div className={`h-32 rounded-lg border border-dashed transition-all flex flex-col items-center justify-center text-xs font-medium ${
-                        isDropTarget 
-                          ? 'border-sky-400 bg-sky-100/50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300' 
+                      <div className={`h-32 rounded-lg border border-dashed transition-all flex flex-col items-center justify-center text-xs font-medium ${isDropTarget
+                          ? 'border-sky-400 bg-sky-100/50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300'
                           : 'border-slate-300 dark:border-slate-750 bg-white/40 dark:bg-slate-900/40 text-slate-400 dark:text-slate-500'
-                      }`}>
+                        }`}>
                         <span>{isDropTarget ? `Drop to move to ${stage.label}` : `No leads in ${stage.label}`}</span>
                         <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Drag leads here</span>
                       </div>
@@ -370,11 +366,10 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                             style={{
                               borderLeft: `5px solid ${stage.color}`
                             }}
-                            className={`bg-white dark:bg-[#111627] rounded-lg p-3 border border-slate-200 dark:border-slate-800 transition-all duration-150 space-y-2 group cursor-grab active:cursor-grabbing select-none shadow-2xs hover:shadow-md dark:hover:border-slate-700 hover:-translate-y-0.5 ${
-                              isDragging 
-                                ? 'opacity-30 scale-95 border-dashed border-2 border-sky-400 shadow-none' 
+                            className={`bg-white dark:bg-[#111627] rounded-lg p-3 border border-slate-200 dark:border-slate-800 transition-all duration-150 space-y-2 group cursor-grab active:cursor-grabbing select-none shadow-2xs hover:shadow-md dark:hover:border-slate-700 hover:-translate-y-0.5 ${isDragging
+                                ? 'opacity-30 scale-95 border-dashed border-2 border-sky-400 shadow-none'
                                 : ''
-                            }`}
+                              }`}
                           >
                             {/* Card Title & Company Header (Matches Screenshot layout) */}
                             <div className="flex items-start justify-between gap-2">
@@ -398,9 +393,9 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                             {/* Stage-wise Color Status Badge & Temperature row */}
                             <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
                               {/* Stage Badge with Stage's Custom Color (Matches screenshot) */}
-                              <span 
-                                style={{ 
-                                  backgroundColor: stage.badgeBg, 
+                              <span
+                                style={{
+                                  backgroundColor: stage.badgeBg,
                                   color: stage.badgeText,
                                   border: `1px solid ${stage.color}30`
                                 }}
@@ -411,11 +406,10 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
 
                               {/* Lead Temperature indicator */}
                               <div className="flex items-center space-x-1">
-                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center ${
-                                  lead.temperature === 'Hot' ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/60' :
-                                  lead.temperature === 'Warm' ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/60' :
-                                  'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/60'
-                                }`}>
+                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center ${lead.temperature === 'Hot' ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/60' :
+                                    lead.temperature === 'Warm' ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/60' :
+                                      'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/60'
+                                  }`}>
                                   {lead.temperature === 'Hot' && <Flame className="w-2.5 h-2.5 text-red-500 mr-0.5" />}
                                   <span>{lead.temperature} · {lead.score}%</span>
                                 </span>
@@ -423,13 +417,13 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                             </div>
 
                             {/* Assignee row & Quick Action Buttons (Eye, Email, Meet) */}
-                            <div 
+                            <div
                               className="pt-1.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs"
                               onClick={(e) => e.stopPropagation()}
                             >
                               {/* Assignee Avatar & Name (Matches Screenshot: Admin / User 1 / User 2) */}
                               <div className="flex items-center space-x-1.5 min-w-0">
-                                <div 
+                                <div
                                   style={{ backgroundColor: avatarBg }}
                                   className="w-5 h-5 rounded-full flex items-center justify-center text-slate-900 font-bold text-[9px] shrink-0 shadow-2xs"
                                 >
@@ -463,7 +457,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                                 >
                                   <Video className="w-3.5 h-3.5" />
                                 </button>
-                                
+
                                 {/* Stage quick changer */}
                                 <select
                                   value={lead.status}
@@ -518,23 +512,23 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                   const avatarInitials = lead.avatarInitials || lead.name.split(' ').map(n => n[0]).join('').slice(0, 2) || 'ME';
 
                   return (
-                    <tr 
-                      key={lead.id} 
+                    <tr
+                      key={lead.id}
                       onClick={() => onOpenLeadDetail(lead)}
                       style={{ borderLeft: `4px solid ${stage.color}` }}
                       className="hover:bg-slate-50/80 dark:hover:bg-[#182138]/60 transition-colors cursor-pointer group"
                     >
                       {/* Stage Column with Stage-wise Color Badge */}
                       <td className="py-3.5 px-4">
-                        <span 
-                          style={{ 
-                            backgroundColor: stage.badgeBg, 
+                        <span
+                          style={{
+                            backgroundColor: stage.badgeBg,
                             color: stage.badgeText,
                             border: `1px solid ${stage.color}40`
                           }}
                           className="text-[10px] font-bold px-2.5 py-1 rounded-md inline-flex items-center space-x-1 uppercase"
                         >
-                          <span 
+                          <span
                             className="w-1.5 h-1.5 rounded-full inline-block mr-1"
                             style={{ backgroundColor: stage.color }}
                           />
@@ -544,7 +538,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
 
                       <td className="py-3.5 px-4">
                         <div className="flex items-center space-x-3">
-                          <div 
+                          <div
                             style={{ backgroundColor: avatarBg }}
                             className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-900 font-bold text-xs shrink-0 shadow-2xs"
                           >
@@ -566,11 +560,10 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
 
                       <td className="py-3.5 px-4">
                         <div className="flex items-center space-x-2">
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center space-x-1 ${
-                            lead.temperature === 'Hot' ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/60' :
-                            lead.temperature === 'Warm' ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/60' :
-                            'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/60'
-                          }`}>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center space-x-1 ${lead.temperature === 'Hot' ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/60' :
+                              lead.temperature === 'Warm' ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900/60' :
+                                'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/60'
+                            }`}>
                             {lead.temperature === 'Hot' && <Flame className="w-3 h-3 text-red-500 mr-0.5" />}
                             <span>{lead.temperature} ({lead.score}%)</span>
                           </span>

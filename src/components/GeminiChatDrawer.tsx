@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Bot, 
-  Send, 
-  Sparkles, 
-  BrainCircuit, 
-  User, 
-  Trash2, 
-  Minimize2, 
-  Maximize2, 
-  ChevronDown, 
-  Copy, 
-  Check, 
+import {
+  Bot,
+  Send,
+  Sparkles,
+  BrainCircuit,
+  User,
+  Trash2,
+  Minimize2,
+  Maximize2,
+  ChevronDown,
+  Copy,
+  Check,
   Zap,
   TrendingUp,
   Receipt,
@@ -58,10 +58,12 @@ How can I assist your enterprise revenue operations today?`,
   }, [messages, isOpen]);
 
   const quickPrompts: { label: string; text: string; persona: RolePersona }[] = [
-    { label: 'Pipeline Win Tactics', text: 'Analyze our active enterprise deals and provide 3 immediate tactics to accelerate the Apex Tech and Hyperion deals before Friday.', persona: 'cro' },
-    { label: 'Draft Follow-Up Email', text: 'Draft an executive closing email to Sarah Jenkins at Apex Tech confirming our 3-year price lock in exchange for signature this week.', persona: 'copywriter' },
-    { label: 'Audit Overdue Invoices', text: 'Analyze our accounts receivable status, highlight the overdue Vanguard Logistics invoice, and recommend a collection protocol.', persona: 'auditor' },
-    { label: 'Google Meet Prep', text: 'Prepare an executive talking points brief for today\'s Google Meet with Hyperion Manufacturing comparing our TCO to SAP.', persona: 'assistant' }
+    { label: 'Create Sales Quotation', text: 'Create a sales quotation for Northwind Traders for 3 units of software license at $2,800 each, valid for 30 days and include GST terms.', persona: 'assistant' },
+    { label: 'Create Purchase Order', text: 'Create a purchase order to Delta Components for office chairs and monitors, 25 items total, delivery in 7 days, with payment terms net 15.', persona: 'assistant' },
+    { label: 'Create Journal Voucher', text: 'Create a journal voucher for office rent of $4,500 for this month and record it to rent expense and accrued liabilities.', persona: 'auditor' },
+    { label: 'Generate P&L', text: 'Generate a simple P&L report for this month showing revenue, expenses, gross profit, and net profit for the company.', persona: 'auditor' },
+    { label: 'Create Credit Note', text: 'Create a credit note for customer Aurora House for a returned product worth $1,250 and reference the related invoice.', persona: 'assistant' },
+    { label: 'AI ERP Summary', text: 'Summarize the outstanding sales, purchase, and accounting status and recommend the top 3 actions for month-end closing.', persona: 'cro' }
   ];
 
   const handleSendMessage = async (textToSend?: string) => {
@@ -221,11 +223,10 @@ How can I assist your enterprise revenue operations today?`,
               )}
 
               <div
-                className={`max-w-[85%] rounded-2xl p-3.5 text-xs leading-relaxed ${
-                  isModel
+                className={`max-w-[85%] rounded-2xl p-3.5 text-xs leading-relaxed ${isModel
                     ? 'bg-slate-800/90 text-slate-200 border border-slate-700/80 shadow-xs'
                     : 'bg-indigo-600 text-white shadow-xs'
-                }`}
+                  }`}
               >
                 {/* Message Body using React-Markdown */}
                 <div className="markdown-body prose prose-invert prose-xs max-w-none">

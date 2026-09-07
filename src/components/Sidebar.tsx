@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  UserCheck, 
-  Users, 
-  Building2, 
-  Receipt, 
-  Mail, 
-  Calendar, 
-  Video, 
-  MapPin, 
-  Sparkles, 
+import {
+  LayoutDashboard,
+  Briefcase,
+  UserCheck,
+  Users,
+  Building2,
+  Receipt,
+  Mail,
+  Calendar,
+  Video,
+  MapPin,
+  Sparkles,
   BrainCircuit,
   SlidersHorizontal,
   Bot,
@@ -26,7 +26,8 @@ import {
   ChevronDown,
   ChevronRight,
   Palette,
-  Layers
+  Layers,
+  Factory
 } from 'lucide-react';
 import { ViewType, NavastraApp, NavastraAppId, ThemeMode } from '../types';
 import { ErpLogoBadge } from './Logo';
@@ -58,7 +59,6 @@ interface SidebarProps {
   unreadEmailsCount: number;
   activeDealsCount: number;
   isCollapsed?: boolean;
-  onToggleCollapse?: () => void;
   onOpenCrmSettings?: () => void;
   installedApps?: NavastraApp[];
   onNavigateToAppsHub?: () => void;
@@ -75,7 +75,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   unreadEmailsCount,
   activeDealsCount,
   isCollapsed = false,
-  onToggleCollapse,
   onOpenCrmSettings,
   installedApps = [],
   onNavigateToAppsHub,
@@ -94,22 +93,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
       case 'ai_studio':
         return 'crm';
       case 'invoices':
-        return 'invoicing';
+      case 'sales_orders':
+        return 'sales';
+      case 'purchase':
+        return 'purchase';
+      case 'inventory_stock':
+        return 'inventory';
+      case 'manufacturing':
+        return 'mrp';
+      case 'pos':
+        return 'pos';
+      case 'accounting':
+        return 'accounting';
       case 'gmail':
       case 'calendar':
       case 'meet':
       case 'maps':
         return 'google_suite';
-      case 'sales_orders':
-        return 'sales';
-      case 'inventory_stock':
-        return 'inventory';
-      case 'project_tasks':
-        return 'projects';
-      case 'hr_employees':
-        return 'hr';
-      case 'helpdesk_tickets':
-        return 'helpdesk';
       case 'settings':
         return 'settings';
       case 'apps_grid':
@@ -147,12 +147,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       isBase: true,
       defaultView: 'pipeline',
       features: [
-        { 
-          id: 'pipeline', 
-          label: 'Pipeline & Deals', 
-          icon: Briefcase, 
-          badge: activeDealsCount > 0 ? activeDealsCount : undefined, 
-          badgeColor: 'bg-[#cca458] text-slate-900' 
+        {
+          id: 'pipeline',
+          label: 'Pipeline & Deals',
+          icon: Briefcase,
+          badge: activeDealsCount > 0 ? activeDealsCount : undefined,
+          badgeColor: 'bg-[#cca458] text-slate-900'
         },
         { id: 'leads', label: 'Leads & Prospects', icon: UserCheck },
         { id: 'dashboard', label: 'CRM Overview', icon: LayoutDashboard },
@@ -161,13 +161,63 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ]
     },
     {
-      id: 'invoicing',
-      name: 'Invoicing & Billing',
-      icon: Receipt,
-      color: '#2563eb',
-      defaultView: 'invoices',
+      id: 'sales',
+      name: 'CRM & Sales',
+      icon: TrendingUp,
+      color: '#fa7c17',
+      defaultView: 'sales_orders',
       features: [
-        { id: 'invoices', label: 'Invoices & Receipts', icon: Receipt }
+        { id: 'sales_orders', label: 'Quotation, Order, Delivery, Invoice, Payment', icon: TrendingUp }
+      ]
+    },
+    {
+      id: 'purchase',
+      name: 'Purchase',
+      icon: ShoppingBag,
+      color: '#10b981',
+      defaultView: 'purchase',
+      features: [
+        { id: 'purchase', label: 'RFQ, PO, GRN, Invoice, Payment', icon: ShoppingBag }
+      ]
+    },
+    {
+      id: 'inventory',
+      name: 'Warehouse & Inventory',
+      icon: Package,
+      color: '#8b5cf6',
+      defaultView: 'inventory_stock',
+      features: [
+        { id: 'inventory_stock', label: 'Stock, Warehouses, Transfers', icon: Package }
+      ]
+    },
+    {
+      id: 'mrp',
+      name: 'Manufacturing',
+      icon: Factory,
+      color: '#f59e0b',
+      defaultView: 'manufacturing',
+      features: [
+        { id: 'manufacturing', label: 'BOM, Work Orders, Capacity', icon: Factory }
+      ]
+    },
+    {
+      id: 'pos',
+      name: 'Point of Sale',
+      icon: ShoppingBag,
+      color: '#10b981',
+      defaultView: 'pos',
+      features: [
+        { id: 'pos', label: 'Barcode, QR, Cash, Card & Retail Checkout', icon: ShoppingBag }
+      ]
+    },
+    {
+      id: 'accounting',
+      name: 'Accounting',
+      icon: Receipt,
+      color: '#7c3aed',
+      defaultView: 'accounting',
+      features: [
+        { id: 'accounting', label: 'COA, JV, Reconciliation, Reports', icon: Receipt }
       ]
     },
     {
@@ -177,66 +227,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
       color: '#ea4335',
       defaultView: 'meet',
       features: [
-        { 
-          id: 'gmail', 
-          label: 'Google Mail', 
-          icon: Mail, 
-          badge: unreadEmailsCount > 0 ? unreadEmailsCount : undefined, 
-          badgeColor: 'bg-red-500 text-white' 
+        {
+          id: 'gmail',
+          label: 'Google Mail',
+          icon: Mail,
+          badge: unreadEmailsCount > 0 ? unreadEmailsCount : undefined,
+          badgeColor: 'bg-red-500 text-white'
         },
         { id: 'calendar', label: 'Google Calendar', icon: Calendar },
         { id: 'meet', label: 'Google Meet', icon: Video },
         { id: 'maps', label: 'Territory Maps', icon: MapPin },
-      ]
-    },
-    {
-      id: 'sales',
-      name: 'Sales Orders',
-      icon: TrendingUp,
-      color: '#fa7c17',
-      defaultView: 'sales_orders',
-      features: [
-        { id: 'sales_orders', label: 'Quotations & Orders', icon: TrendingUp }
-      ]
-    },
-    {
-      id: 'inventory',
-      name: 'Inventory & Stock',
-      icon: Package,
-      color: '#8b5cf6',
-      defaultView: 'inventory_stock',
-      features: [
-        { id: 'inventory_stock', label: 'Stock & Warehouses', icon: Package }
-      ]
-    },
-    {
-      id: 'projects',
-      name: 'Project Management',
-      icon: FolderKanban,
-      color: '#06b6d4',
-      defaultView: 'project_tasks',
-      features: [
-        { id: 'project_tasks', label: 'Tasks & Sprints', icon: FolderKanban }
-      ]
-    },
-    {
-      id: 'hr',
-      name: 'Human Resources',
-      icon: Users,
-      color: '#ec4899',
-      defaultView: 'hr_employees',
-      features: [
-        { id: 'hr_employees', label: 'Employee Directory', icon: Users }
-      ]
-    },
-    {
-      id: 'helpdesk',
-      name: 'Helpdesk & Support',
-      icon: LifeBuoy,
-      color: '#f59e0b',
-      defaultView: 'helpdesk_tickets',
-      features: [
-        { id: 'helpdesk_tickets', label: 'Support Tickets', icon: LifeBuoy }
       ]
     },
     // Default Apps always shown
@@ -289,23 +289,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside 
-      className={`${
-        isCollapsed ? 'w-18' : 'w-64'
-      } bg-white dark:bg-[#141b2d] border-r border-slate-200 dark:border-[#242c44] flex flex-col h-screen select-none shrink-0 text-slate-700 dark:text-slate-300 transition-all duration-200 ease-in-out relative shadow-xs`}
+    <aside
+      className={`${isCollapsed ? 'w-18' : 'w-64'
+        } bg-white dark:bg-[#141b2d] border-r border-slate-200 dark:border-[#242c44] flex flex-col h-screen select-none shrink-0 text-slate-700 dark:text-slate-300 transition-all duration-200 ease-in-out relative shadow-xs`}
     >
-      {/* Brand Header with Navastra ERP Logo Badge & Collapse Toggle */}
-      <div className={`h-18 flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-4.5'} border-b border-slate-200 dark:border-[#242c44] bg-slate-50/90 dark:bg-[#1a2136] transition-colors`}>
+      {/* Brand Header with Navastra ERP Logo Badge */}
+      <div className={`h-18 flex items-center ${isCollapsed ? 'justify-center px-2' : 'px-4.5'} border-b border-slate-200 dark:border-[#242c44] bg-slate-50/90 dark:bg-[#1a2136] transition-colors`}>
         <div className="flex items-center space-x-3 min-w-0">
-          <ErpLogoBadge 
+          <ErpLogoBadge
             size={36}
             onClick={onNavigateHome || onNavigateToAppsHub}
             title="Navastra App Launcher (Click to redirect)"
             className="shrink-0 ring-1 ring-slate-300/60 dark:ring-white/10 cursor-pointer hover:scale-105 hover:ring-emerald-400/50 transition-all"
           />
           {!isCollapsed && (
-            <div 
-              className="min-w-0 cursor-pointer group" 
+            <div
+              className="min-w-0 cursor-pointer group"
               onClick={onNavigateHome || onNavigateToAppsHub}
               title="Navastra App Launcher"
             >
@@ -322,16 +321,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
 
-        {/* Collapse / Expand Toggle Button */}
-        {onToggleCollapse && !isCollapsed && (
-          <button
-            onClick={onToggleCollapse}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-[#252f4a] transition-colors cursor-pointer"
-            title="Collapse Sidebar"
-          >
-            <PanelLeftClose className="w-4 h-4" />
-          </button>
-        )}
       </div>
 
       {/* Navigation Scrollable Area */}
@@ -360,22 +349,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   id={`app-nav-${app.id}`}
                   onClick={() => handleAppClick(app)}
                   title={isCollapsed ? app.name : undefined}
-                  className={`w-full flex items-center ${
-                    isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3 py-2.5'
-                  } rounded-xl text-xs font-bold transition-all relative cursor-pointer ${
-                    isAppActive
+                  className={`w-full flex items-center ${isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3 py-2.5'
+                    } rounded-xl text-xs font-bold transition-all relative cursor-pointer ${isAppActive
                       ? 'bg-indigo-50/80 dark:bg-[#252f4c] text-indigo-950 dark:text-white shadow-2xs border border-indigo-100 dark:border-indigo-500/20'
                       : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/90 dark:hover:bg-[#1e263d]'
-                  }`}
+                    }`}
                 >
                   <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} min-w-0`}>
-                    <div 
+                    <div
                       style={{ backgroundColor: `${app.color}22`, borderColor: `${app.color}55` }}
                       className="w-7 h-7 rounded-lg border flex items-center justify-center shrink-0"
                     >
-                      <AppIcon 
+                      <AppIcon
                         style={{ color: app.color }}
-                        className="w-4 h-4" 
+                        className="w-4 h-4"
                       />
                     </div>
                     {!isCollapsed && (
@@ -418,11 +405,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                               onSelectView(feature.id);
                             }
                           }}
-                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
-                            isFeatureActive
-                              ? 'bg-indigo-100/70 dark:bg-[#2e3b5e] text-indigo-950 dark:text-white font-bold shadow-2xs'
-                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-[#1e263d]'
-                          }`}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${isFeatureActive
+                            ? 'bg-indigo-100/70 dark:bg-[#2e3b5e] text-indigo-950 dark:text-white font-bold shadow-2xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-[#1e263d]'
+                            }`}
                         >
                           <div className="flex items-center space-x-2.5 min-w-0">
                             <FeatureIcon className={`w-3.5 h-3.5 shrink-0 ${isFeatureActive ? 'text-indigo-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`} />
@@ -503,7 +489,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* User / Org Footer */}
       <div className={`p-3 border-t border-slate-200 dark:border-[#242c44] bg-slate-50/90 dark:bg-[#131929] flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} transition-colors`}>
         <div className="flex items-center space-x-2.5 min-w-0">
-          <div 
+          <div
             onClick={onOpenCrmSettings}
             className="w-8 h-8 rounded-full bg-slate-700 dark:bg-[#3b5358] text-slate-100 font-bold text-xs flex items-center justify-center shadow-xs shrink-0 cursor-pointer hover:ring-2 hover:ring-[#cca458]/50"
             title="Alex Rivera (AN) - Click for ERP settings"
@@ -522,16 +508,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Expand trigger button when collapsed */}
-      {isCollapsed && onToggleCollapse && (
-        <button
-          onClick={onToggleCollapse}
-          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-white dark:bg-[#252f4c] border border-slate-300 dark:border-[#37446d] text-slate-700 dark:text-white flex items-center justify-center shadow-md hover:bg-slate-100 dark:hover:bg-[#cca458] dark:hover:text-slate-900 transition-all z-20 cursor-pointer"
-          title="Expand Sidebar"
-        >
-          <PanelLeftOpen className="w-3.5 h-3.5" />
-        </button>
-      )}
     </aside>
   );
 };

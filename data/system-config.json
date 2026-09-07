@@ -1,0 +1,20 @@
+{
+  "database": {
+    "enabled": true,
+    "host": "localhost",
+    "port": 5432,
+    "database": "postgres",
+    "user": "postgres",
+    "password": "postgres",
+    "ssl": false
+  },
+  "ai": {
+    "enabled": false,
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "apiKey": "",
+    "bearerToken": "",
+    "tokenHeader": "Authorization",
+    "baseUrl": "https://generativelanguage.googleapis.com"
+  }
+}

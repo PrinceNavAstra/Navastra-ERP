@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  Plus, 
-  Kanban as KanbanIcon, 
-  List, 
-  Sparkles, 
-  BrainCircuit, 
-  ChevronRight, 
-  MoreHorizontal, 
-  Video, 
-  Mail, 
-  MapPin, 
+import {
+  Plus,
+  Kanban as KanbanIcon,
+  List,
+  Sparkles,
+  BrainCircuit,
+  ChevronRight,
+  MoreHorizontal,
+  Video,
+  Mail,
+  MapPin,
   Building2,
   Calendar,
   Check,
@@ -138,7 +138,7 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
   const totalPipelineValue = filteredDeals.reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <div className="p-4 md:p-6 space-y-4 max-w-full mx-auto h-[calc(100vh-4.5rem)] flex flex-col overflow-hidden bg-[#f4f6f8] dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 transition-colors duration-200">
+    <div className="p-4 md:p-6 space-y-4 max-w-full mx-auto h-[calc(100vh-4.5rem)] flex flex-col overflow-hidden bg-slate-100/90 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 transition-colors duration-200">
       {/* Top Filter Bar (Matches Reference Screenshot layout with QUICK FILTERS) */}
       <div className="bg-white dark:bg-[#121829] p-3 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs dark:shadow-none flex flex-wrap items-center justify-between gap-3 shrink-0 transition-colors">
         <div className="flex flex-wrap items-center gap-3 flex-1 min-w-[320px]">
@@ -203,10 +203,10 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
               {/* Visual color swatches showing current stage palette on screen */}
               <div className="flex items-center space-x-1 pl-1.5 border-l border-slate-200 dark:border-slate-700">
                 {stages.map((s) => (
-                  <span 
-                    key={s.id} 
-                    style={{ backgroundColor: s.color }} 
-                    className="w-2.5 h-2.5 rounded-full inline-block shadow-2xs shrink-0" 
+                  <span
+                    key={s.id}
+                    style={{ backgroundColor: s.color }}
+                    className="w-2.5 h-2.5 rounded-full inline-block shadow-2xs shrink-0"
                     title={`${s.label}: ${s.color}`}
                   />
                 ))}
@@ -220,22 +220,20 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
           <div className="flex bg-slate-100 dark:bg-[#1a233c] p-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
             <button
               onClick={() => setViewMode('kanban')}
-              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'kanban' 
-                  ? 'bg-white dark:bg-[#253050] text-slate-900 dark:text-white shadow-2xs' 
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${viewMode === 'kanban'
+                  ? 'bg-white dark:bg-[#253050] text-slate-900 dark:text-white shadow-2xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+                }`}
             >
               <KanbanIcon className="w-3.5 h-3.5" />
               <span>Kanban</span>
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'table' 
-                  ? 'bg-white dark:bg-[#253050] text-slate-900 dark:text-white shadow-2xs' 
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${viewMode === 'table'
+                  ? 'bg-white dark:bg-[#253050] text-slate-900 dark:text-white shadow-2xs'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+                }`}
             >
               <List className="w-3.5 h-3.5" />
               <span>Table</span>
@@ -271,14 +269,13 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                   style={{
                     borderBottom: `3px solid ${stage.color}`
                   }}
-                  className={`w-[320px] sm:w-[335px] flex flex-col h-full bg-[#ebedf0]/85 dark:bg-[#13192b]/95 rounded-2xl border border-slate-300/80 dark:border-slate-800/90 transition-all duration-150 overflow-hidden shadow-2xs dark:shadow-md dark:shadow-black/20 ${
-                    isDropTarget 
-                      ? 'ring-2 ring-sky-400 bg-sky-50/50 dark:bg-sky-950/40' 
+                  className={`w-[320px] sm:w-[335px] flex flex-col h-full bg-[#ebedf0]/85 dark:bg-[#13192b]/95 rounded-2xl border border-slate-300/80 dark:border-slate-800/90 transition-all duration-150 overflow-hidden shadow-2xs dark:shadow-md dark:shadow-black/20 ${isDropTarget
+                      ? 'ring-2 ring-sky-400 bg-sky-50/50 dark:bg-sky-950/40'
                       : ''
-                  }`}
+                    }`}
                 >
                   {/* Solid Colored Column Header (Exact visual match to Screenshot with Quick Add Button) */}
-                  <div 
+                  <div
                     style={{ backgroundColor: stage.color }}
                     className="px-3.5 py-2.5 text-white font-bold text-xs flex items-center justify-between shrink-0 select-none shadow-xs"
                   >
@@ -305,11 +302,10 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                   {/* Cards Scrollable Column with Smooth Scroll Effect */}
                   <div className="flex-1 overflow-y-auto p-2.5 pr-2 space-y-2.5 kanban-scroll">
                     {stageDeals.length === 0 ? (
-                      <div className={`h-36 rounded-xl border border-dashed transition-all flex flex-col items-center justify-center text-xs font-medium p-4 text-center ${
-                        isDropTarget 
-                          ? 'border-sky-400 bg-sky-100/50 dark:bg-sky-950/50 text-sky-800 dark:text-sky-300' 
+                      <div className={`h-36 rounded-xl border border-dashed transition-all flex flex-col items-center justify-center text-xs font-medium p-4 text-center ${isDropTarget
+                          ? 'border-sky-400 bg-sky-100/50 dark:bg-sky-950/50 text-sky-800 dark:text-sky-300'
                           : 'border-slate-300 dark:border-slate-700/60 bg-white/40 dark:bg-[#182036]/40 text-slate-400 dark:text-slate-500'
-                      }`}>
+                        }`}>
                         <span className="font-semibold">{isDropTarget ? `Drop to move to ${stage.label}` : `No deals in ${stage.label}`}</span>
                         <span className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Drag opportunities here or click + above</span>
                       </div>
@@ -330,11 +326,10 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                             style={{
                               borderLeft: `4px solid ${stage.color}`
                             }}
-                            className={`bg-white dark:bg-[#182035] rounded-xl p-3 border border-slate-200/90 dark:border-slate-750/70 transition-all duration-200 space-y-2.5 group cursor-grab active:cursor-grabbing select-none shadow-2xs dark:shadow-sm dark:shadow-black/25 hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-black/40 hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-600 dark:hover:bg-[#1d2740] ${
-                              isDragging 
-                                ? 'opacity-30 scale-95 border-dashed border-2 border-sky-400 shadow-none' 
+                            className={`bg-white dark:bg-[#182035] rounded-xl p-3 border border-slate-200/90 dark:border-slate-750/70 transition-all duration-200 space-y-2.5 group cursor-grab active:cursor-grabbing select-none shadow-2xs dark:shadow-sm dark:shadow-black/25 hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-black/40 hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-600 dark:hover:bg-[#1d2740] ${isDragging
+                                ? 'opacity-30 scale-95 border-dashed border-2 border-sky-400 shadow-none'
                                 : ''
-                            }`}
+                              }`}
                           >
                             {/* Card Header with Company & Contact */}
                             <div className="flex items-start justify-between gap-2">
@@ -358,9 +353,9 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                             {/* Stage Badge & Expected Date Row */}
                             <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-700/60">
                               {/* Stage Badge with Stage's Custom Color (Matches screenshot) */}
-                              <span 
-                                style={{ 
-                                  backgroundColor: stage.badgeBg, 
+                              <span
+                                style={{
+                                  backgroundColor: stage.badgeBg,
                                   color: stage.badgeText,
                                   border: `1px solid ${stage.color}35`
                                 }}
@@ -378,7 +373,7 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                             {deal.actionItems && deal.actionItems.length > 0 && (
                               <div className="pt-1.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px]">
                                 <div className="flex items-center space-x-1.5 text-slate-600 dark:text-slate-300 font-medium truncate">
-                                  <span 
+                                  <span
                                     className="w-1.5 h-1.5 rounded-full shrink-0"
                                     style={{ backgroundColor: stage.color }}
                                   />
@@ -388,13 +383,13 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                             )}
 
                             {/* Quick Actions & Assignee Toolbar */}
-                            <div 
+                            <div
                               className="pt-1.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs"
                               onClick={(e) => e.stopPropagation()}
                             >
                               {/* Assignee Avatar & Name */}
                               <div className="flex items-center space-x-1.5 min-w-0">
-                                <div 
+                                <div
                                   style={{ backgroundColor: avatarBg }}
                                   className="w-5 h-5 rounded-full flex items-center justify-center text-slate-900 font-bold text-[9px] shrink-0 shadow-2xs"
                                 >
@@ -487,7 +482,7 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                       <td className="py-3 px-4 font-medium text-slate-600 dark:text-slate-300">{deal.contactName}</td>
                       <td className="py-3 px-4 font-bold text-slate-900 dark:text-emerald-400">${deal.value.toLocaleString()}</td>
                       <td className="py-3 px-4">
-                        <span 
+                        <span
                           style={{ backgroundColor: stageObj.badgeBg, color: stageObj.badgeText }}
                           className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                         >

@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ArrowLeft, 
-  Mail, 
-  Phone, 
-  Calendar, 
-  Check, 
-  Plus, 
-  Sparkles, 
-  BrainCircuit, 
-  Video, 
-  MapPin, 
-  Building2, 
-  User, 
-  Clock, 
-  CheckCircle2, 
-  Send, 
-  FileText, 
-  Flame, 
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  Calendar,
+  Check,
+  Plus,
+  Sparkles,
+  BrainCircuit,
+  Video,
+  MapPin,
+  Building2,
+  User,
+  Clock,
+  CheckCircle2,
+  Send,
+  FileText,
+  Flame,
   ExternalLink,
   MessageSquare,
   Activity,
@@ -122,8 +122,8 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
   const avatarInitials = companyName
     ? companyName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
     : contactName
-    ? contactName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
-    : 'NL';
+      ? contactName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()
+      : 'NL';
 
   const ownerInitials = assignedTo ? assignedTo.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'AR';
   const avatarBg = leadOrDeal.avatarBg || '#d4a853';
@@ -135,13 +135,13 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
   const [activeTab, setActiveTab] = useState<'overview' | 'activity' | 'comments' | 'ai'>('overview');
 
   // Next actions state
-  const initialActions: ActionItem[] = leadOrDeal.actionItems && leadOrDeal.actionItems.length > 0 
-    ? leadOrDeal.actionItems 
+  const initialActions: ActionItem[] = leadOrDeal.actionItems && leadOrDeal.actionItems.length > 0
+    ? leadOrDeal.actionItems
     : [
-        { id: 'act-1', title: 'Send customized enterprise proposal with Google Workspace SLA', dueDate: 'Tomorrow, 2:00 PM', completed: false, type: 'proposal' },
-        { id: 'act-2', title: 'Schedule Google Meet product walkthrough with ' + (contactName || 'lead'), dueDate: 'Mar 12, 10:30 AM', completed: false, type: 'meeting' },
-        { id: 'act-3', title: 'Verify multi-currency billing requirements for European properties', dueDate: 'Mar 14, 4:00 PM', completed: true, type: 'review' }
-      ];
+      { id: 'act-1', title: 'Send customized enterprise proposal with Google Workspace SLA', dueDate: 'Tomorrow, 2:00 PM', completed: false, type: 'proposal' },
+      { id: 'act-2', title: 'Schedule Google Meet product walkthrough with ' + (contactName || 'lead'), dueDate: 'Mar 12, 10:30 AM', completed: false, type: 'meeting' },
+      { id: 'act-3', title: 'Verify multi-currency billing requirements for European properties', dueDate: 'Mar 14, 4:00 PM', completed: true, type: 'review' }
+    ];
 
   const [actionItems, setActionItems] = useState<ActionItem[]>(initialActions);
   const [newActionTitle, setNewActionTitle] = useState('');
@@ -151,10 +151,10 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
   const initialActivities: ActivityEvent[] = leadOrDeal.activities && leadOrDeal.activities.length > 0
     ? leadOrDeal.activities
     : [
-        { id: 'ev-1', type: 'email', title: 'Inbound Inquiry Received', description: `${contactName || 'Lead'} reached out via referral link regarding CRM rollout.`, date: 'Today at 09:15 AM', author: contactName || 'System' },
-        { id: 'ev-2', type: 'note', title: 'Initial Qualification Note', description: `Budget approved ($${(value || 0).toLocaleString()}). Looking to deploy by end of quarter.`, date: 'Today at 10:30 AM', author: assignedTo },
-        { id: 'ev-3', type: 'stage_change', title: 'Stage Updated to New', description: `Lead captured and assigned to ${assignedTo}.`, date: 'Today at 10:35 AM', author: 'System' }
-      ];
+      { id: 'ev-1', type: 'email', title: 'Inbound Inquiry Received', description: `${contactName || 'Lead'} reached out via referral link regarding CRM rollout.`, date: 'Today at 09:15 AM', author: contactName || 'System' },
+      { id: 'ev-2', type: 'note', title: 'Initial Qualification Note', description: `Budget approved ($${(value || 0).toLocaleString()}). Looking to deploy by end of quarter.`, date: 'Today at 10:30 AM', author: assignedTo },
+      { id: 'ev-3', type: 'stage_change', title: 'Stage Updated to New', description: `Lead captured and assigned to ${assignedTo}.`, date: 'Today at 10:35 AM', author: 'System' }
+    ];
 
   const [activities, setActivities] = useState<ActivityEvent[]>(initialActivities);
   const [comments, setComments] = useState<{ id: string; author: string; text: string; date: string }[]>(
@@ -284,17 +284,17 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
   const displayBreadcrumbName = companyName.trim() || (isInitiallyBlank ? 'New Lead' : 'Lead Details');
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-[#fbf9f4] p-4 lg:p-8 space-y-6 max-w-7xl mx-auto overflow-y-auto">
+    <div className="min-h-[calc(100vh-4rem)] bg-slate-50/90 dark:bg-[#0b0f19] p-4 lg:p-8 space-y-6 max-w-7xl mx-auto overflow-y-auto transition-colors duration-200">
       {/* Top Navigation */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
           <button
             id="back-to-pipeline-btn"
             onClick={onBack}
-            className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors py-1.5 px-3.5 rounded-full hover:bg-slate-200/60 bg-white/80 border border-slate-200/80 shadow-2xs cursor-pointer"
+            className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors py-1.5 px-3.5 rounded-full hover:bg-slate-200/60 dark:hover:bg-slate-700/60 bg-white/80 dark:bg-[#111827]/80 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs cursor-pointer"
             title="Back to previous view"
           >
-            <ArrowLeft className="w-3.5 h-3.5 text-slate-700" />
+            <ArrowLeft className="w-3.5 h-3.5 text-slate-700 dark:text-slate-200" />
             <span>Back</span>
           </button>
         </div>
@@ -314,32 +314,32 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
             <button
               id="edit-lead-btn-top"
               onClick={() => setIsEditing(true)}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-full text-xs font-semibold transition-all shadow-2xs cursor-pointer"
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-white dark:bg-[#111827] border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full text-xs font-semibold transition-all shadow-2xs cursor-pointer"
             >
-              <Edit3 className="w-3.5 h-3.5 text-slate-500" />
+              <Edit3 className="w-3.5 h-3.5 text-slate-500 dark:text-slate-300" />
               <span>Edit Details</span>
             </button>
           )}
 
           <button
             onClick={() => onComposeEmail(contactEmail, contactName, leadOrDeal.id)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-white border border-slate-200/80 rounded-full text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-all shadow-2xs cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-700 rounded-full text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-2xs cursor-pointer"
           >
-            <Mail className="w-3.5 h-3.5 text-slate-500" />
+            <Mail className="w-3.5 h-3.5 text-slate-500 dark:text-slate-300" />
             <span>Send Gmail</span>
           </button>
           <button
             onClick={() => onLaunchMeeting(contactName || 'Lead', contactEmail, `${companyName || 'Lead'} Executive Demo`)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-white border border-slate-200/80 rounded-full text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-all shadow-2xs cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-700 rounded-full text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-2xs cursor-pointer"
           >
-            <Video className="w-3.5 h-3.5 text-emerald-600" />
+            <Video className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Launch Meet</span>
           </button>
           <button
             onClick={() => onLocateOnMap(companyName || 'San Francisco')}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-white border border-slate-200/80 rounded-full text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-all shadow-2xs cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-700 rounded-full text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-2xs cursor-pointer"
           >
-            <MapPin className="w-3.5 h-3.5 text-amber-600" />
+            <MapPin className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>Map Location</span>
           </button>
           {isDeal && (
@@ -361,7 +361,7 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <span>Lead successfully saved and registered into CRM Pipeline!</span>
           </div>
-          <button 
+          <button
             onClick={() => setSavedSuccess(false)}
             className="text-emerald-700 hover:text-emerald-900 underline text-[11px] cursor-pointer"
           >
@@ -371,12 +371,12 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
       )}
 
       {/* Main Top Banner Card (Matches Image 1) */}
-      <div className="bg-white rounded-3xl border border-slate-250/70 p-6 lg:p-8 shadow-xs space-y-6">
+      <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-250/70 dark:border-slate-700/80 p-6 lg:p-8 shadow-xs space-y-6 transition-colors duration-200">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Left Avatar & Title Details */}
           <div className="flex items-start space-x-5 flex-1 min-w-0">
             {/* Square/Rounded Initials Avatar in Tan/Gold */}
-            <div 
+            <div
               style={{ backgroundColor: avatarBg }}
               className="w-16 h-16 rounded-2xl flex items-center justify-center text-slate-900 font-bold text-2xl shadow-2xs shrink-0 tracking-tight select-none"
             >
@@ -393,10 +393,10 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder="Company Name (e.g. Aurora House)"
-                      className="font-serif text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight bg-slate-50 border border-slate-300 rounded-xl px-3 py-1 w-full focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
+                      className="font-serif text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight bg-slate-50 dark:bg-[#0f172a] border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-1 w-full focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
                       autoFocus={isInitiallyBlank}
                     />
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e6f4ed] text-[#2d7d56] border border-[#c4e8d7] shrink-0">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e6f4ed] dark:bg-emerald-500/10 text-[#2d7d56] dark:text-emerald-300 border border-[#c4e8d7] dark:border-emerald-500/30 shrink-0">
                       {activeStage === 'lead_in' ? 'New' : activeStage.replace('_', ' ')}
                     </span>
                   </div>
@@ -407,56 +407,56 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                       value={contactName}
                       onChange={(e) => setContactName(e.target.value)}
                       placeholder="Contact Name (e.g. Mina Ellis)"
-                      className="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                      className="text-xs text-slate-700 dark:text-slate-100 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                     <input
                       type="email"
                       value={contactEmail}
                       onChange={(e) => setContactEmail(e.target.value)}
                       placeholder="Email (e.g. mina@aurorahouse.co)"
-                      className="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                      className="text-xs text-slate-700 dark:text-slate-100 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                     <input
                       type="text"
                       value={contactPhone}
                       onChange={(e) => setContactPhone(e.target.value)}
                       placeholder="Phone (e.g. +1 415 555 0149)"
-                      className="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                      className="text-xs text-slate-700 dark:text-slate-100 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                   </div>
                 </div>
               ) : (
                 <>
                   <div className="flex items-center space-x-3">
-                    <h1 className="font-serif text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight leading-tight">
+                    <h1 className="font-serif text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
                       {companyName || 'Unnamed Company'}
                     </h1>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e6f4ed] text-[#2d7d56] border border-[#c4e8d7]">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e6f4ed] dark:bg-emerald-500/10 text-[#2d7d56] dark:text-emerald-300 border border-[#c4e8d7] dark:border-emerald-500/30">
                       {activeStage === 'lead_in' ? 'New' : activeStage.replace('_', ' ')}
                     </span>
                   </div>
 
-                  <div className="text-sm font-medium text-slate-600">
+                  <div className="text-sm font-medium text-slate-600 dark:text-slate-300">
                     {contactName || 'Primary Contact'} · {companyName || 'Company'}
                   </div>
 
                   {/* Contact Icons */}
-                  <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-0.5">
+                  <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-300 pt-0.5">
                     {contactEmail && (
-                      <a 
+                      <a
                         href={`mailto:${contactEmail}`}
-                        className="flex items-center space-x-1.5 hover:text-emerald-700 transition-colors"
+                        className="flex items-center space-x-1.5 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
                       >
-                        <Mail className="w-3.5 h-3.5 text-slate-400" />
+                        <Mail className="w-3.5 h-3.5 text-slate-400 dark:text-slate-300" />
                         <span>{contactEmail}</span>
                       </a>
                     )}
                     {contactPhone && (
-                      <a 
+                      <a
                         href={`tel:${contactPhone}`}
-                        className="flex items-center space-x-1.5 hover:text-emerald-700 transition-colors"
+                        className="flex items-center space-x-1.5 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
                       >
-                        <Phone className="w-3.5 h-3.5 text-slate-400" />
+                        <Phone className="w-3.5 h-3.5 text-slate-400 dark:text-slate-300" />
                         <span>{contactPhone}</span>
                       </a>
                     )}
@@ -467,31 +467,31 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
           </div>
 
           {/* Right Metrics 2x2 Grid (Matches Image 1) */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-3 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-200/80 pt-4 lg:pt-0 lg:pl-8">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-200/80 dark:border-slate-700 pt-4 lg:pt-0 lg:pl-8">
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
                 OPPORTUNITY
               </div>
               {isEditing ? (
                 <div className="flex items-center mt-0.5">
-                  <span className="text-slate-400 font-bold text-sm mr-1">$</span>
+                  <span className="text-slate-400 dark:text-slate-300 font-bold text-sm mr-1">$</span>
                   <input
                     type="number"
                     value={value || ''}
                     onChange={(e) => setValue(Number(e.target.value))}
                     placeholder="12800"
-                    className="w-24 px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-sm font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-24 px-2 py-0.5 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
               ) : (
-                <div className="text-lg font-bold text-slate-900 mt-0.5">
+                <div className="text-lg font-bold text-slate-900 dark:text-white mt-0.5">
                   ${(value || 0).toLocaleString()}
                 </div>
               )}
             </div>
 
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
                 EXPECTED CLOSE
               </div>
               {isEditing ? (
@@ -500,20 +500,20 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                   value={expectedClose}
                   onChange={(e) => setExpectedClose(e.target.value)}
                   placeholder="Mar 18, 2025"
-                  className="w-28 px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-xs font-bold text-slate-900 mt-0.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-28 px-2 py-0.5 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded text-xs font-bold text-slate-900 dark:text-white mt-0.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 />
               ) : (
-                <div className="text-sm font-bold text-slate-900 mt-0.5">
+                <div className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
                   {expectedClose}
                 </div>
               )}
             </div>
 
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
                 OWNER
               </div>
-              <div className="text-sm font-bold text-slate-900 mt-0.5 flex items-center space-x-1.5">
+              <div className="text-sm font-bold text-slate-900 dark:text-white mt-0.5 flex items-center space-x-1.5">
                 <span className="w-5 h-5 rounded-full bg-[#cca458] text-slate-900 text-[10px] font-bold flex items-center justify-center select-none">
                   {ownerInitials}
                 </span>
@@ -523,10 +523,10 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                     value={assignedTo}
                     onChange={(e) => setAssignedTo(e.target.value)}
                     placeholder="Alex Rivera"
-                    className="w-24 px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-24 px-2 py-0.5 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 ) : (
-                  <span>{assignedTo}</span>
+                  <span className="dark:text-slate-100">{assignedTo}</span>
                 )}
               </div>
             </div>
@@ -539,7 +539,7 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as Priority)}
-                  className="mt-0.5 px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-xs font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 capitalize"
+                  className="mt-0.5 px-2 py-0.5 bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500 capitalize"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
@@ -547,11 +547,10 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                   <option value="urgent">Urgent</option>
                 </select>
               ) : (
-                <div className="text-sm font-bold text-slate-900 mt-0.5 capitalize flex items-center space-x-1">
-                  <span className={`w-2 h-2 rounded-full ${
-                    priority === 'urgent' || priority === 'high' ? 'bg-red-500' :
+                <div className="text-sm font-bold text-slate-900 dark:text-white mt-0.5 capitalize flex items-center space-x-1">
+                  <span className={`w-2 h-2 rounded-full ${priority === 'urgent' || priority === 'high' ? 'bg-red-500' :
                     priority === 'medium' ? 'bg-amber-500' : 'bg-slate-400'
-                  }`} />
+                    }`} />
                   <span>{priority}</span>
                 </div>
               )}
@@ -592,7 +591,7 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                   onClick={() => handleStageSelect(stage.id)}
                   className="group flex flex-col items-start space-y-1.5 text-left focus:outline-none transition-all cursor-pointer"
                 >
-                  <span 
+                  <span
                     style={{
                       color: isCurrent ? stage.color : isPastOrActive ? '#334155' : '#94a3b8'
                     }}
@@ -600,15 +599,15 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                   >
                     {stage.label}
                   </span>
-                  <div 
+                  <div
                     style={{
-                      backgroundColor: isCurrent 
-                        ? (stage.barColor || stage.color) 
-                        : isPastOrActive 
-                        ? `${stage.color}88` 
-                        : '#e2e8f0'
+                      backgroundColor: isCurrent
+                        ? (stage.barColor || stage.color)
+                        : isPastOrActive
+                          ? `${stage.color}88`
+                          : '#e2e8f0'
                     }}
-                    className="w-full h-2 rounded-full transition-all duration-300 shadow-2xs" 
+                    className="w-full h-2 rounded-full transition-all duration-300 shadow-2xs"
                   />
                 </button>
               );
@@ -621,22 +620,20 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
       <div className="flex items-center space-x-6 border-b border-slate-200/80 px-2">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`pb-3 text-xs font-bold transition-all relative cursor-pointer ${
-            activeTab === 'overview'
-              ? 'text-[#2d7d56] border-b-2 border-[#2d7d56]'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
+          className={`pb-3 text-xs font-bold transition-all relative cursor-pointer ${activeTab === 'overview'
+            ? 'text-[#2d7d56] border-b-2 border-[#2d7d56]'
+            : 'text-slate-500 hover:text-slate-800'
+            }`}
         >
           Overview
         </button>
 
         <button
           onClick={() => setActiveTab('activity')}
-          className={`pb-3 text-xs font-bold transition-all flex items-center space-x-1.5 relative cursor-pointer ${
-            activeTab === 'activity'
-              ? 'text-[#2d7d56] border-b-2 border-[#2d7d56]'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
+          className={`pb-3 text-xs font-bold transition-all flex items-center space-x-1.5 relative cursor-pointer ${activeTab === 'activity'
+            ? 'text-[#2d7d56] border-b-2 border-[#2d7d56]'
+            : 'text-slate-500 hover:text-slate-800'
+            }`}
         >
           <span>Activity</span>
           <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 text-slate-700 font-semibold">
@@ -646,11 +643,10 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
 
         <button
           onClick={() => setActiveTab('comments')}
-          className={`pb-3 text-xs font-bold transition-all flex items-center space-x-1.5 relative cursor-pointer ${
-            activeTab === 'comments'
-              ? 'text-[#2d7d56] border-b-2 border-[#2d7d56]'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
+          className={`pb-3 text-xs font-bold transition-all flex items-center space-x-1.5 relative cursor-pointer ${activeTab === 'comments'
+            ? 'text-[#2d7d56] border-b-2 border-[#2d7d56]'
+            : 'text-slate-500 hover:text-slate-800'
+            }`}
         >
           <span>Comments</span>
           <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-200 text-slate-700 font-semibold">
@@ -660,11 +656,10 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
 
         <button
           onClick={() => setActiveTab('ai')}
-          className={`pb-3 text-xs font-bold transition-all flex items-center space-x-1.5 relative cursor-pointer ${
-            activeTab === 'ai'
-              ? 'text-[#2d7d56] border-b-2 border-[#2d7d56]'
-              : 'text-slate-500 hover:text-slate-800'
-          }`}
+          className={`pb-3 text-xs font-bold transition-all flex items-center space-x-1.5 relative cursor-pointer ${activeTab === 'ai'
+            ? 'text-[#2d7d56] border-b-2 border-[#2d7d56]'
+            : 'text-slate-500 hover:text-slate-800'
+            }`}
         >
           <Sparkles className="w-3 h-3 text-[#d4a853]" />
           <span>Gemini Intelligence</span>
@@ -678,16 +673,16 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
           {activeTab === 'overview' && (
             <>
               {/* Deal & Prospect Summary (Matches Image 1) */}
-              <div className="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-4 shadow-2xs">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <h3 className="font-serif text-base font-bold text-slate-900">Prospect & Deal Dossier</h3>
+              <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-700/80 p-6 space-y-4 shadow-2xs">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/70 pb-3">
+                  <h3 className="font-serif text-base font-bold text-slate-900 dark:text-white">Prospect & Deal Dossier</h3>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs text-slate-500 font-medium">Source:</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Source:</span>
                     {isEditing ? (
                       <select
                         value={source}
                         onChange={(e) => setSource(e.target.value)}
-                        className="text-xs bg-slate-50 border border-slate-200 rounded px-2 py-0.5 font-semibold text-slate-800"
+                        className="text-xs bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 font-semibold text-slate-800 dark:text-slate-100"
                       >
                         <option value="Referral">Referral</option>
                         <option value="Inbound">Inbound</option>
@@ -697,13 +692,13 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                         <option value="Event">Event</option>
                       </select>
                     ) : (
-                      <span className="text-xs font-semibold text-slate-800">{source}</span>
+                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-100">{source}</span>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-700">Strategic Notes & Qualification Context</label>
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Strategic Notes & Qualification Context</label>
                   <textarea
                     rows={3}
                     value={notes}
@@ -712,53 +707,53 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                       if (onUpdateNotes) onUpdateNotes(e.target.value);
                     }}
                     placeholder="Enter prospect qualification notes, business requirements, and strategic context..."
-                    className="w-full p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 leading-relaxed"
+                    className="w-full p-3.5 bg-slate-50 dark:bg-[#0f172a] border border-slate-200/80 dark:border-slate-700 rounded-2xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 leading-relaxed"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70">
-                    <div className="text-[10px] uppercase font-bold text-slate-400">INDUSTRY & MODEL</div>
+                  <div className="p-3 bg-slate-50 dark:bg-[#0f172a] rounded-xl border border-slate-200/70 dark:border-slate-700">
+                    <div className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-400">INDUSTRY & MODEL</div>
                     {isEditing ? (
                       <input
                         type="text"
                         value={industry}
                         onChange={(e) => setIndustry(e.target.value)}
                         placeholder="e.g. Enterprise Hospitality"
-                        className="text-xs font-bold text-slate-800 mt-0.5 bg-white border border-slate-200 rounded px-1.5 py-0.5 w-full"
+                        className="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5 w-full"
                       />
                     ) : (
-                      <div className="text-xs font-bold text-slate-800 mt-0.5">{industry}</div>
+                      <div className="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5">{industry}</div>
                     )}
                   </div>
 
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70">
-                    <div className="text-[10px] uppercase font-bold text-slate-400">TERRITORY</div>
+                  <div className="p-3 bg-slate-50 dark:bg-[#0f172a] rounded-xl border border-slate-200/70 dark:border-slate-700">
+                    <div className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-400">TERRITORY</div>
                     {isEditing ? (
                       <input
                         type="text"
                         value={territory}
                         onChange={(e) => setTerritory(e.target.value)}
                         placeholder="e.g. San Francisco, USA"
-                        className="text-xs font-bold text-slate-800 mt-0.5 bg-white border border-slate-200 rounded px-1.5 py-0.5 w-full"
+                        className="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5 w-full"
                       />
                     ) : (
-                      <div className="text-xs font-bold text-slate-800 mt-0.5">{territory}</div>
+                      <div className="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5">{territory}</div>
                     )}
                   </div>
 
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70">
-                    <div className="text-[10px] uppercase font-bold text-slate-400">WIN PROBABILITY</div>
+                  <div className="p-3 bg-slate-50 dark:bg-[#0f172a] rounded-xl border border-slate-200/70 dark:border-slate-700">
+                    <div className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-400">WIN PROBABILITY</div>
                     {isEditing ? (
                       <input
                         type="text"
                         value={winProbability}
                         onChange={(e) => setWinProbability(e.target.value)}
                         placeholder="e.g. 88%"
-                        className="text-xs font-bold text-emerald-700 mt-0.5 bg-white border border-slate-200 rounded px-1.5 py-0.5 w-full"
+                        className="text-xs font-bold text-emerald-700 dark:text-emerald-300 mt-0.5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5 w-full"
                       />
                     ) : (
-                      <div className="text-xs font-bold text-emerald-700 mt-0.5">{winProbability} (High Velocity)</div>
+                      <div className="text-xs font-bold text-emerald-700 dark:text-emerald-300 mt-0.5">{winProbability} (High Velocity)</div>
                     )}
                   </div>
                 </div>
@@ -777,13 +772,13 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
               </div>
 
               {/* Key Stakeholder Card */}
-              <div className="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-4 shadow-2xs">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-700/80 p-6 space-y-4 shadow-2xs">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/70 pb-3">
                   <div className="flex items-center space-x-2">
-                    <User className="w-4 h-4 text-slate-600" />
-                    <h3 className="font-serif text-base font-bold text-slate-900">Key Stakeholder & Champion</h3>
+                    <User className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+                    <h3 className="font-serif text-base font-bold text-slate-900 dark:text-white">Key Stakeholder & Champion</h3>
                   </div>
-                  <button 
+                  <button
                     onClick={() => onComposeEmail(contactEmail, contactName, leadOrDeal.id)}
                     className="text-xs font-bold text-[#2d7d56] hover:underline cursor-pointer"
                   >
@@ -793,12 +788,12 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-slate-700 text-sm select-none">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-700 dark:text-slate-100 text-sm select-none">
                       {avatarInitials}
                     </div>
                     <div>
-                      <div className="font-bold text-sm text-slate-900">{contactName || 'Primary Contact'}</div>
-                      <div className="text-xs text-slate-500">
+                      <div className="font-bold text-sm text-slate-900 dark:text-white">{contactName || 'Primary Contact'}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
                         {contactEmail || 'No email provided'} · {contactPhone || 'No phone provided'}
                       </div>
                     </div>
@@ -826,14 +821,14 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
           )}
 
           {activeTab === 'activity' && (
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-4 shadow-2xs">
-              <h3 className="font-serif text-base font-bold text-slate-900 border-b border-slate-100 pb-3">
+            <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-700/80 p-6 space-y-4 shadow-2xs">
+              <h3 className="font-serif text-base font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-700/70 pb-3">
                 Engagement & Activity Timeline
               </h3>
               <div className="space-y-4">
                 {activities.map((item) => (
-                  <div key={item.id} className="flex items-start space-x-3 p-3 bg-slate-50 rounded-2xl border border-slate-200/60">
-                    <div className="p-2 bg-white rounded-xl shadow-2xs shrink-0 text-slate-700">
+                  <div key={item.id} className="flex items-start space-x-3 p-3 bg-slate-50 dark:bg-[#0f172a] rounded-2xl border border-slate-200/60 dark:border-slate-700">
+                    <div className="p-2 bg-white dark:bg-[#111827] rounded-xl shadow-2xs shrink-0 text-slate-700 dark:text-slate-200">
                       {item.type === 'email' && <Mail className="w-4 h-4 text-indigo-600" />}
                       {item.type === 'call' && <Phone className="w-4 h-4 text-emerald-600" />}
                       {item.type === 'meeting' && <Video className="w-4 h-4 text-amber-600" />}
@@ -842,11 +837,11 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs text-slate-900">{item.title}</span>
-                        <span className="text-[10px] text-slate-400 font-medium">{item.date}</span>
+                        <span className="font-bold text-xs text-slate-900 dark:text-white">{item.title}</span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-400 font-medium">{item.date}</span>
                       </div>
-                      <p className="text-xs text-slate-600 mt-0.5">{item.description}</p>
-                      <div className="text-[10px] text-slate-400 mt-1 font-semibold">Author: {item.author}</div>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">{item.description}</p>
+                      <div className="text-[10px] text-slate-400 dark:text-slate-400 mt-1 font-semibold">Author: {item.author}</div>
                     </div>
                   </div>
                 ))}
@@ -855,8 +850,8 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
           )}
 
           {activeTab === 'comments' && (
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-4 shadow-2xs">
-              <h3 className="font-serif text-base font-bold text-slate-900 border-b border-slate-100 pb-3">
+            <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-700/80 p-6 space-y-4 shadow-2xs">
+              <h3 className="font-serif text-base font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-700/70 pb-3">
                 Internal Team Comments
               </h3>
 
@@ -866,7 +861,7 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                   placeholder="Add an internal note or tag a colleague..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200/80 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
+                  className="flex-1 px-4 py-2 bg-slate-50 dark:bg-[#0f172a] border border-slate-200/80 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600"
                 />
                 <button
                   type="submit"
@@ -878,12 +873,12 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
 
               <div className="space-y-3 pt-2">
                 {comments.map((c) => (
-                  <div key={c.id} className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/60 space-y-1">
+                  <div key={c.id} className="p-3.5 bg-slate-50 dark:bg-[#0f172a] rounded-2xl border border-slate-200/60 dark:border-slate-700 space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-xs text-slate-900">{c.author}</span>
-                      <span className="text-[10px] text-slate-400">{c.date}</span>
+                      <span className="font-bold text-xs text-slate-900 dark:text-white">{c.author}</span>
+                      <span className="text-[10px] text-slate-400 dark:text-slate-400">{c.date}</span>
                     </div>
-                    <p className="text-xs text-slate-700 leading-relaxed">{c.text}</p>
+                    <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">{c.text}</p>
                   </div>
                 ))}
               </div>
@@ -891,11 +886,11 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
           )}
 
           {activeTab === 'ai' && (
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-5 shadow-2xs">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-700/80 p-6 space-y-5 shadow-2xs">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/70 pb-3">
                 <div className="flex items-center space-x-2">
                   <Sparkles className="w-5 h-5 text-[#d4a853]" />
-                  <h3 className="font-serif text-base font-bold text-slate-900">Gemini AI Strategy Advisor</h3>
+                  <h3 className="font-serif text-base font-bold text-slate-900 dark:text-white">Gemini AI Strategy Advisor</h3>
                 </div>
                 <button
                   onClick={handleRunAiEnrichment}
@@ -906,24 +901,24 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                 </button>
               </div>
 
-              <div className="p-4 bg-amber-50/60 rounded-2xl border border-amber-200/80 space-y-2">
-                <div className="flex items-center space-x-2 text-xs font-bold text-amber-900">
+              <div className="p-4 bg-amber-50/60 dark:bg-amber-950/20 rounded-2xl border border-amber-200/80 dark:border-amber-800/60 space-y-2">
+                <div className="flex items-center space-x-2 text-xs font-bold text-amber-900 dark:text-amber-200">
                   <BrainCircuit className="w-4 h-4 text-amber-700" />
                   <span>Closing Strategy Recommendation</span>
                 </div>
-                <p className="text-xs text-slate-800 leading-relaxed">
+                <p className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed">
                   {aiAnalysis}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/70">
-                  <div className="text-xs font-bold text-slate-800">Key Differentiator</div>
-                  <div className="text-xs text-slate-600 mt-1">Native Google Workspace integration & automated dispatch routing</div>
+                <div className="p-3.5 bg-slate-50 dark:bg-[#0f172a] rounded-2xl border border-slate-200/70 dark:border-slate-700">
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-100">Key Differentiator</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">Native Google Workspace integration & automated dispatch routing</div>
                 </div>
-                <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/70">
-                  <div className="text-xs font-bold text-slate-800">Next Recommended Step</div>
-                  <div className="text-xs text-slate-600 mt-1">Present customized contract terms with multi-year tier discount</div>
+                <div className="p-3.5 bg-slate-50 dark:bg-[#0f172a] rounded-2xl border border-slate-200/70 dark:border-slate-700">
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-100">Next Recommended Step</div>
+                  <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">Present customized contract terms with multi-year tier discount</div>
                 </div>
               </div>
             </div>
@@ -933,12 +928,12 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
         {/* Right 1 Column: Next Actions & Attributes (Matches Image 1) */}
         <div className="space-y-6">
           {/* Next Actions Card (Matches Image 1) */}
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-serif text-lg font-bold text-slate-900">Next actions</h3>
+          <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-700/80 p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/70 pb-3">
+              <h3 className="font-serif text-lg font-bold text-slate-900 dark:text-white">Next actions</h3>
               <button
                 onClick={() => setIsAddingAction(!isAddingAction)}
-                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-colors cursor-pointer"
                 title="Add Next Action"
               >
                 <Plus className="w-4 h-4" />
@@ -953,14 +948,14 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                   placeholder="Task title (e.g. Send proposal)..."
                   value={newActionTitle}
                   onChange={(e) => setNewActionTitle(e.target.value)}
-                  className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none"
+                  className="w-full px-3 py-1.5 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 focus:outline-none"
                   autoFocus
                 />
                 <div className="flex justify-end space-x-2">
                   <button
                     type="button"
                     onClick={() => setIsAddingAction(false)}
-                    className="px-2.5 py-1 text-xs text-slate-500 hover:text-slate-700 cursor-pointer"
+                    className="px-2.5 py-1 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -980,31 +975,28 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
                 <div
                   key={action.id}
                   onClick={() => handleToggleAction(action.id)}
-                  className={`p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer flex items-start space-x-3 group ${
-                    action.completed
-                      ? 'bg-slate-50/70 border-slate-200/60 opacity-75'
-                      : 'bg-white border-slate-200/80 hover:border-slate-350 hover:shadow-xs shadow-2xs'
-                  }`}
+                  className={`p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer flex items-start space-x-3 group ${action.completed
+                    ? 'bg-slate-50/70 dark:bg-slate-800/60 border-slate-200/60 dark:border-slate-700 opacity-75'
+                    : 'bg-white dark:bg-[#0f172a] border-slate-200/80 dark:border-slate-700 hover:border-slate-350 dark:hover:border-slate-600 hover:shadow-xs shadow-2xs'
+                    }`}
                 >
                   <button
                     type="button"
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0 transition-all duration-200 transform group-hover:scale-105 active:scale-95 cursor-pointer ${
-                      action.completed
-                        ? 'bg-[#2d7d56] border-[#2d7d56] text-white shadow-2xs'
-                        : 'border-slate-300 bg-white text-transparent group-hover:border-[#2d7d56]'
-                    }`}
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 shrink-0 transition-all duration-200 transform group-hover:scale-105 active:scale-95 cursor-pointer ${action.completed
+                      ? 'bg-[#2d7d56] border-[#2d7d56] text-white shadow-2xs'
+                      : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-[#0f172a] text-transparent group-hover:border-[#2d7d56]'
+                      }`}
                   >
                     <Check className={`w-3 h-3 stroke-[3] transition-transform duration-150 ${action.completed ? 'scale-100' : 'scale-0'}`} />
                   </button>
 
                   <div className="flex-1 min-w-0">
-                    <p className={`text-xs font-medium leading-snug transition-all duration-200 ${
-                      action.completed ? 'line-through text-slate-400' : 'text-slate-800'
-                    }`}>
+                    <p className={`text-xs font-medium leading-snug transition-all duration-200 ${action.completed ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-100'
+                      }`}>
                       {action.title}
                     </p>
-                    <div className="flex items-center space-x-1.5 mt-1 text-[10px] text-slate-400 font-medium">
-                      <Clock className="w-3 h-3 text-slate-400" />
+                    <div className="flex items-center space-x-1.5 mt-1 text-[10px] text-slate-400 dark:text-slate-400 font-medium">
+                      <Clock className="w-3 h-3 text-slate-400 dark:text-slate-400" />
                       <span>{action.dueDate}</span>
                     </div>
                   </div>

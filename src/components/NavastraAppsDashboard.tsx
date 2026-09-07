@@ -1,23 +1,23 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  Search, 
-  Plus, 
-  Settings, 
-  ShoppingBag, 
-  Grid, 
-  Kanban, 
+import {
+  Search,
+  Plus,
+  Settings,
+  ShoppingBag,
+  Grid,
+  Kanban,
   Briefcase,
-  Receipt, 
-  Mail, 
-  Calendar, 
-  Video, 
-  MapPin, 
-  TrendingUp, 
-  Package, 
-  FolderKanban, 
-  Users, 
-  LifeBuoy, 
-  Factory, 
+  Receipt,
+  Mail,
+  Calendar,
+  Video,
+  MapPin,
+  TrendingUp,
+  Package,
+  FolderKanban,
+  Users,
+  LifeBuoy,
+  Factory,
   CreditCard,
   Sparkles,
   ArrowUpRight,
@@ -87,11 +87,11 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<string>('All');
-  
+
   // Header state for system notifications and profile dropdown
   const [isNotificationsOpen, setIsNotificationsOpen] = useState<boolean>(false);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
-  
+
   const [notifications, setNotifications] = useState<SystemNotification[]>([
     {
       id: 'notif-1',
@@ -205,29 +205,28 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
       );
     }
 
-    // 3. Invoicing & Billing
-    if (isInstalled('invoicing')) {
-      tiles.push({
-        id: 'invoicing_app',
-        appId: 'invoicing',
-        targetView: 'invoices',
-        name: 'Invoicing & Bills',
-        category: 'Finance',
-        icon: Receipt,
-        color: '#2563eb'
-      });
-    }
-
-    // 4. Dynamic Installed Apps
+    // 3. Core ERP Modules
     if (isInstalled('sales')) {
       tiles.push({
         id: 'sales_app',
         appId: 'sales',
         targetView: 'sales_orders',
-        name: 'Sales Orders',
-        category: 'CRM',
+        name: 'CRM & Sales',
+        category: 'ERP',
         icon: TrendingUp,
         color: '#fa7c17'
+      });
+    }
+
+    if (isInstalled('purchase')) {
+      tiles.push({
+        id: 'purchase_app',
+        appId: 'purchase',
+        targetView: 'purchase',
+        name: 'Purchase',
+        category: 'ERP',
+        icon: ShoppingBag,
+        color: '#10b981'
       });
     }
 
@@ -236,58 +235,22 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
         id: 'inventory_app',
         appId: 'inventory',
         targetView: 'inventory_stock',
-        name: 'Inventory & Stock',
-        category: 'Operations',
+        name: 'Warehouse',
+        category: 'ERP',
         icon: Package,
         color: '#8b5cf6'
       });
     }
 
-    if (isInstalled('projects')) {
-      tiles.push({
-        id: 'projects_app',
-        appId: 'projects',
-        targetView: 'project_tasks',
-        name: 'Project Tasks',
-        category: 'Operations',
-        icon: FolderKanban,
-        color: '#06b6d4'
-      });
-    }
-
-    if (isInstalled('hr')) {
-      tiles.push({
-        id: 'hr_app',
-        appId: 'hr',
-        targetView: 'hr_employees',
-        name: 'Human Resources',
-        category: 'Operations',
-        icon: Users,
-        color: '#ec4899'
-      });
-    }
-
-    if (isInstalled('helpdesk')) {
-      tiles.push({
-        id: 'helpdesk_app',
-        appId: 'helpdesk',
-        targetView: 'helpdesk_tickets',
-        name: 'Helpdesk Tickets',
-        category: 'Operations',
-        icon: LifeBuoy,
-        color: '#f59e0b'
-      });
-    }
-
     if (isInstalled('mrp')) {
       tiles.push({
-        id: 'mrp_app',
+        id: 'manufacturing_app',
         appId: 'mrp',
-        targetView: 'inventory_stock',
+        targetView: 'manufacturing',
         name: 'Manufacturing',
-        category: 'Operations',
+        category: 'ERP',
         icon: Factory,
-        color: '#64748b'
+        color: '#f59e0b'
       });
     }
 
@@ -295,15 +258,27 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
       tiles.push({
         id: 'pos_app',
         appId: 'pos',
-        targetView: 'sales_orders',
+        targetView: 'pos',
         name: 'Point of Sale',
-        category: 'CRM',
-        icon: CreditCard,
+        category: 'ERP',
+        icon: ShoppingBag,
         color: '#10b981'
       });
     }
 
-    // 5. Default Applications shown always:
+    if (isInstalled('accounting')) {
+      tiles.push({
+        id: 'accounting_app',
+        appId: 'accounting',
+        targetView: 'accounting',
+        name: 'Accounting',
+        category: 'ERP',
+        icon: Receipt,
+        color: '#7c3aed'
+      });
+    }
+
+    // 4. Default Applications shown always:
     // Apps Application (App Store / Module Hub)
     tiles.push({
       id: 'app_store_app',
@@ -334,10 +309,10 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
   // Filtered tiles based on search and quick category chip
   const filteredTiles = useMemo(() => {
     return launcherTiles.filter(tile => {
-      const matchesSearch = searchQuery.trim() === '' || 
+      const matchesSearch = searchQuery.trim() === '' ||
         tile.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         tile.category.toLowerCase().includes(searchQuery.toLowerCase());
-      
+
       const matchesCategory = activeFilter === 'All' || tile.category === activeFilter;
 
       return matchesSearch && matchesCategory;
@@ -355,14 +330,14 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
 
   return (
     <div className="min-h-screen relative flex flex-col justify-between overflow-y-auto overflow-x-hidden bg-slate-50 dark:bg-gradient-to-b dark:from-[#111827] dark:via-[#1a233a] dark:to-[#0f172a] text-slate-800 dark:text-white select-none transition-colors duration-200 kanban-scroll">
-      
+
       {/* Subtle atmospheric vignette / backdrop glow */}
       <div className="absolute inset-0 bg-radial-[ellipse_at_top] from-slate-200/50 via-transparent to-transparent dark:from-sky-900/15 dark:via-slate-900/40 dark:to-slate-950 pointer-events-none" />
       <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-sky-400/10 dark:bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Bar on Homepage: Left = System Notifications, Right = Profile Icon */}
       <div className="relative z-30 w-full max-w-7xl mx-auto px-6 sm:px-10 pt-5 pb-2 flex items-center justify-between">
-        
+
         {/* Left: System Notification Icon with Dropdown */}
         <div className="relative">
           <button
@@ -372,11 +347,10 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
               setIsNotificationsOpen(!isNotificationsOpen);
               setIsProfileOpen(false);
             }}
-            className={`relative p-2.5 rounded-2xl transition-all cursor-pointer flex items-center space-x-2 border shadow-xs ${
-              isNotificationsOpen
-                ? 'bg-white dark:bg-[#182138] border-emerald-500 text-emerald-600 dark:text-emerald-400 ring-2 ring-emerald-500/20'
-                : 'bg-white/80 dark:bg-white/10 hover:bg-white dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 border-slate-200/80 dark:border-white/10'
-            }`}
+            className={`relative p-2.5 rounded-2xl transition-all cursor-pointer flex items-center space-x-2 border shadow-xs ${isNotificationsOpen
+              ? 'bg-white dark:bg-[#182138] border-emerald-500 text-emerald-600 dark:text-emerald-400 ring-2 ring-emerald-500/20'
+              : 'bg-white/80 dark:bg-white/10 hover:bg-white dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 border-slate-200/80 dark:border-white/10'
+              }`}
             title="System Notifications"
             aria-label="System Notifications"
           >
@@ -396,9 +370,9 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
           {/* System Notifications Popover Dropdown */}
           {isNotificationsOpen && (
             <>
-              <div 
-                className="fixed inset-0 z-40" 
-                onClick={() => setIsNotificationsOpen(false)} 
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setIsNotificationsOpen(false)}
               />
               <div className="absolute left-0 top-full mt-3 w-80 sm:w-96 bg-white dark:bg-[#161e33] border border-slate-200/90 dark:border-slate-700 rounded-3xl shadow-2xl z-50 p-4 text-slate-700 dark:text-slate-200 animate-in fade-in zoom-in-95 duration-150 origin-top-left transition-all">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -432,7 +406,7 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
                     </div>
                   ) : (
                     notifications.map((notif) => (
-                      <div 
+                      <div
                         key={notif.id}
                         className={`py-2.5 px-2 rounded-xl transition-colors ${notif.unread ? 'bg-slate-50 dark:bg-white/5' : 'opacity-75 hover:opacity-100'}`}
                       >
@@ -480,11 +454,10 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
               setIsProfileOpen(!isProfileOpen);
               setIsNotificationsOpen(false);
             }}
-            className={`flex items-center space-x-2.5 p-1 pr-3 rounded-full border shadow-xs transition-all cursor-pointer group ${
-              isProfileOpen
-                ? 'bg-white dark:bg-[#182138] border-[#cca458] ring-2 ring-[#cca458]/30'
-                : 'bg-white/80 dark:bg-white/10 hover:bg-white dark:hover:bg-white/15 border-slate-200/80 dark:border-white/10'
-            }`}
+            className={`flex items-center space-x-2.5 p-1 pr-3 rounded-full border shadow-xs transition-all cursor-pointer group ${isProfileOpen
+              ? 'bg-white dark:bg-[#182138] border-[#cca458] ring-2 ring-[#cca458]/30'
+              : 'bg-white/80 dark:bg-white/10 hover:bg-white dark:hover:bg-white/15 border-slate-200/80 dark:border-white/10'
+              }`}
             title="User Profile, Profile Settings & Theme"
             aria-label="User Profile"
           >
@@ -502,12 +475,12 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
           {/* Profile Dropdown */}
           {isProfileOpen && (
             <>
-              <div 
-                className="fixed inset-0 z-40" 
-                onClick={() => setIsProfileOpen(false)} 
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setIsProfileOpen(false)}
               />
               <div className="absolute right-0 top-full mt-3 w-72 sm:w-80 bg-white dark:bg-[#161e33] border border-slate-200/90 dark:border-slate-700 rounded-3xl shadow-2xl z-50 p-4 text-slate-700 dark:text-slate-200 animate-in fade-in zoom-in-95 duration-150 origin-top-right transition-all">
-                
+
                 {/* User Info Header */}
                 <div className="flex items-center space-x-3 pb-3.5 border-b border-slate-100 dark:border-slate-800">
                   <div className="w-11 h-11 rounded-2xl bg-[#cca458] text-slate-950 font-bold text-base flex items-center justify-center shadow-sm shrink-0">
@@ -565,11 +538,10 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
                       <button
                         type="button"
                         onClick={() => onSetTheme ? onSetTheme('light') : (theme === 'dark' && onToggleTheme?.())}
-                        className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
-                          theme === 'light'
-                            ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                        }`}
+                        className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${theme === 'light'
+                          ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                          }`}
                       >
                         <Sun className="w-3.5 h-3.5 text-amber-500" />
                         <span>Light</span>
@@ -577,11 +549,10 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
                       <button
                         type="button"
                         onClick={() => onSetTheme ? onSetTheme('dark') : (theme === 'light' && onToggleTheme?.())}
-                        className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
-                          theme === 'dark'
-                            ? 'bg-slate-800 text-white shadow-xs border border-slate-700'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                        }`}
+                        className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${theme === 'dark'
+                          ? 'bg-slate-800 text-white shadow-xs border border-slate-700'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                          }`}
                       >
                         <Moon className="w-3.5 h-3.5 text-amber-400" />
                         <span>Dark</span>
@@ -623,14 +594,14 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
 
       {/* Main Content Area */}
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-4 pb-12 flex-1 flex flex-col items-center">
-        
+
         {/* Top Google-style Search Bar & Quick Chips */}
         <div className="w-full max-w-2xl flex flex-col items-center space-y-4">
-          
+
           {/* Main Google-like Search Capsule */}
           <div className="w-full relative group">
             <div className="flex items-center bg-white dark:bg-white/95 text-slate-800 rounded-full shadow-lg dark:shadow-2xl px-4 py-3.5 transition-all duration-200 border border-slate-200/80 dark:border-white/20 focus-within:ring-2 focus-within:ring-emerald-500 focus-within:bg-white">
-              
+
               {/* Google / Navastra Emblem */}
               <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mr-3 shadow-xs">
                 <ErpLogoIcon size={20} />
@@ -674,11 +645,10 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
                   key={chip.label}
                   type="button"
                   onClick={() => setActiveFilter(chip.label)}
-                  className={`px-3.5 py-1 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                    isActive 
-                      ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md scale-105' 
-                      : 'bg-white/80 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-600 dark:text-slate-200 border border-slate-200/80 dark:border-transparent'
-                  }`}
+                  className={`px-3.5 py-1 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer ${isActive
+                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md scale-105'
+                    : 'bg-white/80 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-600 dark:text-slate-200 border border-slate-200/80 dark:border-transparent'
+                    }`}
                 >
                   {chip.label}
                 </button>
@@ -699,15 +669,15 @@ export const NavastraAppsDashboard: React.FC<NavastraAppsDashboardProps> = ({
                   className="group flex flex-col items-center text-center space-y-2.5 cursor-pointer max-w-[105px] select-none transform hover:-translate-y-1.5 transition-all duration-200"
                 >
                   {/* Round / Squircle App Icon Tile */}
-                  <div 
-                    style={{ 
+                  <div
+                    style={{
                       backgroundColor: tile.color,
                       boxShadow: `0 8px 24px -4px ${tile.color}50`
                     }}
                     className="w-15 h-15 sm:w-16 sm:h-16 rounded-2xl sm:rounded-[22px] flex items-center justify-center text-white transition-all duration-200 group-hover:scale-108 group-hover:shadow-2xl group-active:scale-95 relative"
                   >
                     <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-white drop-shadow-xs" />
-                    
+
                     {tile.badge && (
                       <span className="absolute -top-1 -right-1 bg-emerald-400 text-slate-950 text-[9px] font-black px-1.5 py-0.2 rounded-full border border-slate-900 shadow-xs">
                         {tile.badge}

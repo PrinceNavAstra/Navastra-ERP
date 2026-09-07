@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  SlidersHorizontal, 
-  Palette, 
-  RotateCcw, 
-  Check, 
-  Sparkles, 
+import {
+  SlidersHorizontal,
+  Palette,
+  RotateCcw,
+  Check,
+  Sparkles,
   X,
   Settings,
   Eye,
@@ -55,7 +55,7 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
   const [activeTab, setActiveTab] = useState<'leads' | 'deals' | 'brand'>('leads');
   const [dealConfigs, setDealConfigs] = useState<StageColorConfig[]>(stageConfigs);
   const [leadConfigs, setLeadConfigs] = useState<LeadStageColorConfig[]>(leadStageConfigs);
-  
+
   const [activeDealStageId, setActiveDealStageId] = useState<DealStage>('lead_in');
   const [activeLeadStageId, setActiveLeadStageId] = useState<LeadStatus>('New');
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
@@ -96,7 +96,7 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
       <div className="bg-white rounded-3xl max-w-3xl w-full p-6 lg:p-8 space-y-5 shadow-2xl border border-slate-200 flex flex-col max-h-[90vh] overflow-hidden">
-        
+
         {/* Header with Navigation Tabs */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-4 gap-4 shrink-0">
           <div className="flex items-center space-x-3">
@@ -117,11 +117,10 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('leads')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 ${
-                  activeTab === 'leads'
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 ${activeTab === 'leads'
                     ? 'bg-white text-slate-900 shadow-xs'
                     : 'text-slate-500 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 <Users className="w-3 h-3" />
                 <span>Lead Stages</span>
@@ -129,11 +128,10 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('deals')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 ${
-                  activeTab === 'deals'
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 ${activeTab === 'deals'
                     ? 'bg-white text-slate-900 shadow-xs'
                     : 'text-slate-500 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 <Target className="w-3 h-3" />
                 <span>Deal Stages</span>
@@ -141,11 +139,10 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('brand')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  activeTab === 'brand'
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${activeTab === 'brand'
                     ? 'bg-white text-slate-900 shadow-xs'
                     : 'text-slate-500 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 ERP Brand
               </button>
@@ -164,10 +161,10 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
         {activeTab === 'leads' && (
           <>
             {/* Live Lead Stepper Preview */}
-            <div className="bg-[#f4f6f8] p-4 rounded-2xl border border-slate-200 space-y-3 shrink-0">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+            <div className="bg-slate-100 dark:bg-[#111827] p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 shrink-0 transition-colors">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-200">
                 <div className="flex items-center space-x-1.5">
-                  <Eye className="w-3.5 h-3.5 text-slate-500" />
+                  <Eye className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                   <span>Live Leads Staging-Wise Colors</span>
                 </div>
                 <span className="text-[11px] font-normal text-slate-500">5 Active Stages</span>
@@ -180,21 +177,20 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
                     <button
                       key={stage.id}
                       onClick={() => setActiveLeadStageId(stage.id)}
-                      className={`flex flex-col items-start space-y-1.5 p-2 rounded-xl text-left transition-all ${
-                        isSelected ? 'bg-white shadow-xs ring-2 ring-slate-900' : 'hover:bg-white/60'
-                      }`}
+                      className={`flex flex-col items-start space-y-1.5 p-2 rounded-xl text-left transition-all ${isSelected ? 'bg-white shadow-xs ring-2 ring-slate-900' : 'hover:bg-white/60'
+                        }`}
                     >
                       <div className="flex items-center justify-between w-full">
-                        <span 
+                        <span
                           style={{ color: stage.color }}
                           className="text-[10px] font-bold tracking-wider truncate"
                         >
                           {stage.label}
                         </span>
                       </div>
-                      <div 
+                      <div
                         style={{ backgroundColor: stage.color }}
-                        className="w-full h-1.5 rounded-full shadow-2xs" 
+                        className="w-full h-1.5 rounded-full shadow-2xs"
                       />
                     </button>
                   );
@@ -217,13 +213,12 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
                         borderColor: isActive ? stage.color : undefined,
                         backgroundColor: isActive ? stage.badgeBg : undefined,
                       }}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border flex items-center space-x-2 ${
-                        isActive 
-                          ? 'shadow-2xs text-slate-900' 
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border flex items-center space-x-2 ${isActive
+                          ? 'shadow-2xs text-slate-900'
                           : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                      }`}
+                        }`}
                     >
-                      <span 
+                      <span
                         style={{ backgroundColor: stage.color }}
                         className="w-2.5 h-2.5 rounded-full inline-block shadow-2xs"
                       />
@@ -237,7 +232,7 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
               <div className="bg-white rounded-2xl p-5 border border-slate-200 space-y-4 shadow-2xs">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <span 
+                    <span
                       style={{ backgroundColor: selectedLeadStage.color }}
                       className="w-3.5 h-3.5 rounded-md inline-block shadow-2xs"
                     />
@@ -283,13 +278,12 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
                               barColor: preset.barColor
                             });
                           }}
-                          className={`flex items-center space-x-2 p-2 rounded-xl border text-left transition-all ${
-                            isCurrent 
-                              ? 'border-slate-900 bg-slate-50 shadow-xs ring-1 ring-slate-900' 
+                          className={`flex items-center space-x-2 p-2 rounded-xl border text-left transition-all ${isCurrent
+                              ? 'border-slate-900 bg-slate-50 shadow-xs ring-1 ring-slate-900'
                               : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
-                          }`}
+                            }`}
                         >
-                          <span 
+                          <span
                             style={{ backgroundColor: preset.color }}
                             className="w-4 h-4 rounded-full shrink-0 shadow-2xs"
                           />
@@ -306,7 +300,7 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
                 <div className="pt-2 border-t border-slate-100 flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
                     <label className="text-xs font-bold text-slate-700">Custom Hex:</label>
-                    <input 
+                    <input
                       type="color"
                       value={selectedLeadStage.color}
                       onChange={(e) => {
@@ -346,10 +340,10 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
         {activeTab === 'deals' && (
           <>
             {/* Live Stepper Preview */}
-            <div className="bg-[#f4f6f8] p-4 rounded-2xl border border-slate-200 space-y-3 shrink-0">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+            <div className="bg-slate-100 dark:bg-[#111827] p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 shrink-0 transition-colors">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-200">
                 <div className="flex items-center space-x-1.5">
-                  <Eye className="w-3.5 h-3.5 text-slate-500" />
+                  <Eye className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                   <span>Live Pipeline Stepper Preview</span>
                 </div>
                 <span className="text-[11px] font-normal text-slate-500">6 Active Stages</span>
@@ -362,12 +356,11 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
                     <button
                       key={stage.id}
                       onClick={() => setActiveDealStageId(stage.id)}
-                      className={`flex flex-col items-start space-y-1.5 p-2 rounded-xl text-left transition-all ${
-                        isSelected ? 'bg-white shadow-xs ring-2 ring-slate-900' : 'hover:bg-white/60'
-                      }`}
+                      className={`flex flex-col items-start space-y-1.5 p-2 rounded-xl text-left transition-all ${isSelected ? 'bg-white shadow-xs ring-2 ring-slate-900' : 'hover:bg-white/60'
+                        }`}
                     >
                       <div className="flex items-center justify-between w-full">
-                        <span 
+                        <span
                           style={{ color: stage.color }}
                           className="text-[10px] font-bold tracking-wider truncate"
                         >
@@ -380,9 +373,9 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
                           {idx + 1}
                         </span>
                       </div>
-                      <div 
+                      <div
                         style={{ backgroundColor: stage.barColor }}
-                        className="w-full h-1.5 rounded-full shadow-2xs" 
+                        className="w-full h-1.5 rounded-full shadow-2xs"
                       />
                     </button>
                   );
@@ -404,13 +397,12 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
                         borderColor: isActive ? stage.color : undefined,
                         backgroundColor: isActive ? stage.badgeBg : undefined,
                       }}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border flex items-center space-x-2 ${
-                        isActive 
-                          ? 'shadow-2xs text-slate-900' 
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border flex items-center space-x-2 ${isActive
+                          ? 'shadow-2xs text-slate-900'
                           : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                      }`}
+                        }`}
                     >
-                      <span 
+                      <span
                         style={{ backgroundColor: stage.color }}
                         className="w-2.5 h-2.5 rounded-full"
                       />
@@ -423,7 +415,7 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
               <div className="bg-white rounded-2xl p-5 border border-slate-200 space-y-4 shadow-2xs">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <span 
+                    <span
                       style={{ backgroundColor: selectedDealStage.color }}
                       className="w-3.5 h-3.5 rounded-md"
                     />
@@ -468,13 +460,12 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
                               barColor: preset.barColor
                             });
                           }}
-                          className={`flex items-center space-x-2 p-2 rounded-xl border text-left transition-all ${
-                            isCurrent 
-                              ? 'border-slate-900 bg-slate-50 shadow-xs ring-1 ring-slate-900' 
+                          className={`flex items-center space-x-2 p-2 rounded-xl border text-left transition-all ${isCurrent
+                              ? 'border-slate-900 bg-slate-50 shadow-xs ring-1 ring-slate-900'
                               : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
-                          }`}
+                            }`}
                         >
-                          <span 
+                          <span
                             style={{ backgroundColor: preset.color }}
                             className="w-4 h-4 rounded-full shrink-0 shadow-2xs"
                           />
@@ -491,7 +482,7 @@ export const CrmSettingsModal: React.FC<CrmSettingsModalProps> = ({
                 <div className="pt-2 border-t border-slate-100 flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
                     <label className="text-xs font-bold text-slate-700">Custom Hex:</label>
-                    <input 
+                    <input
                       type="color"
                       value={selectedDealStage.color}
                       onChange={(e) => {

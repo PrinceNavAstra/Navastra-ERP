@@ -242,30 +242,32 @@ export interface ChatMessage {
   rolePersona?: RolePersona;
 }
 
-export type NavastraAppId = 
+export type NavastraAppId =
   | 'apps_launcher'
-  | 'crm' 
-  | 'sales' 
-  | 'invoicing' 
-  | 'inventory' 
-  | 'projects' 
-  | 'hr' 
-  | 'helpdesk' 
-  | 'mrp' 
-  | 'pos' 
-  | 'ecommerce' 
-  | 'google_suite' 
-  | 'app_store' 
+  | 'crm'
+  | 'sales'
+  | 'purchase'
+  | 'accounting'
+  | 'invoicing'
+  | 'inventory'
+  | 'projects'
+  | 'hr'
+  | 'helpdesk'
+  | 'mrp'
+  | 'pos'
+  | 'ecommerce'
+  | 'google_suite'
+  | 'app_store'
   | 'settings';
 
-export type NavastraAppCategory = 
-  | 'All' 
-  | 'Sales & CRM' 
-  | 'Services' 
-  | 'Accounting' 
-  | 'Inventory & MRP' 
-  | 'Human Resources' 
-  | 'Productivity & AI' 
+export type NavastraAppCategory =
+  | 'All'
+  | 'Sales & CRM'
+  | 'Services'
+  | 'Accounting'
+  | 'Inventory & MRP'
+  | 'Human Resources'
+  | 'Productivity & AI'
   | 'System';
 
 export interface NavastraApp {
@@ -288,23 +290,27 @@ export interface NavastraApp {
   defaultView?: ViewType;
 }
 
-export type ViewType = 
+export type ViewType =
   | 'apps_grid'
   | 'app_store'
-  | 'dashboard' 
-  | 'pipeline' 
-  | 'leads' 
-  | 'contacts' 
-  | 'accounts' 
-  | 'invoices' 
+  | 'dashboard'
+  | 'pipeline'
+  | 'leads'
+  | 'contacts'
+  | 'accounts'
+  | 'invoices'
   | 'sales_orders'
+  | 'purchase'
+  | 'accounting'
   | 'inventory_stock'
+  | 'manufacturing'
+  | 'pos'
   | 'project_tasks'
   | 'hr_employees'
   | 'helpdesk_tickets'
-  | 'gmail' 
-  | 'calendar' 
-  | 'meet' 
-  | 'maps' 
+  | 'gmail'
+  | 'calendar'
+  | 'meet'
+  | 'maps'
   | 'settings'
   | 'ai_studio';
