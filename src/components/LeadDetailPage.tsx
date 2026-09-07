@@ -207,7 +207,7 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
       title: newActionTitle.trim(),
       dueDate: 'This week',
       completed: false,
-      type: 'general'
+      type: 'review'
     };
     setActionItems([newAct, ...actionItems]);
     setNewActionTitle('');
@@ -249,7 +249,7 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
       email: contactEmail.trim() || `${finalContact.toLowerCase().replace(/\s+/g, '.')}@example.com`,
       phone: contactPhone.trim() || '+1 415 555 0149',
       estimatedValue: Number(value) || 0,
-      status: activeStage === 'closed_won' ? 'Won' : activeStage === 'closed_lost' ? 'Lost' : 'New',
+      status: activeStage === 'closed_won' || activeStage === 'qualified' ? 'Qualified' : activeStage === 'closed_lost' ? 'Unqualified' : activeStage === 'proposal_sent' ? 'Proposal' : 'New',
       temperature: priority === 'high' || priority === 'urgent' ? 'Hot' : 'Warm',
       source: source,
       assignedTo: assignedTo,
@@ -285,53 +285,18 @@ export const LeadDetailPage: React.FC<LeadDetailPageProps> = ({
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#fbf9f4] p-4 lg:p-8 space-y-6 max-w-7xl mx-auto overflow-y-auto">
-      {/* Top Navigation & Breadcrumbs */}
+      {/* Top Navigation */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
           <button
             id="back-to-pipeline-btn"
             onClick={onBack}
-            className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors py-1.5 px-3 rounded-full hover:bg-slate-200/60 bg-white/70 border border-slate-200/80 shadow-2xs cursor-pointer"
+            className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors py-1.5 px-3.5 rounded-full hover:bg-slate-200/60 bg-white/80 border border-slate-200/80 shadow-2xs cursor-pointer"
             title="Back to previous view"
           >
             <ArrowLeft className="w-3.5 h-3.5 text-slate-700" />
             <span>Back</span>
           </button>
-
-          {/* Dedicated Breadcrumb: CRM / Lead / {name of the page} */}
-          <nav aria-label="Lead Breadcrumb" className="flex items-center space-x-1.5 text-xs bg-white/80 border border-slate-200/90 px-3.5 py-1.5 rounded-full shadow-2xs">
-            <button 
-              id="lead-breadcrumb-crm"
-              onClick={() => {
-                if (onNavigateToCrm) onNavigateToCrm();
-                else onBack();
-              }}
-              className="font-bold text-emerald-700 hover:text-emerald-900 uppercase tracking-wide hover:underline cursor-pointer transition-colors"
-              title="Go to CRM Pipeline"
-            >
-              CRM
-            </button>
-            <span className="text-slate-300 font-light select-none">/</span>
-            <button 
-              id="lead-breadcrumb-lead"
-              onClick={() => {
-                if (onNavigateToLeads) onNavigateToLeads();
-                else onBack();
-              }}
-              className="font-semibold text-slate-600 hover:text-slate-900 hover:underline cursor-pointer transition-colors"
-              title={isDeal ? 'Go to Deals Pipeline' : 'Go to Leads List'}
-            >
-              {isDeal ? 'Deal' : 'Lead'}
-            </button>
-            <span className="text-slate-300 font-light select-none">/</span>
-            <span 
-              id="lead-breadcrumb-company-name"
-              className="font-bold text-slate-900 truncate max-w-[220px] sm:max-w-[320px]"
-              title={displayBreadcrumbName}
-            >
-              {displayBreadcrumbName}
-            </span>
-          </nav>
         </div>
 
         {/* Action Buttons in Header */}

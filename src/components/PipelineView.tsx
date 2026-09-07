@@ -138,19 +138,25 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
   const totalPipelineValue = filteredDeals.reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <div className="p-6 lg:p-8 space-y-6 max-w-full mx-auto h-[calc(100vh-5rem)] flex flex-col overflow-hidden bg-[#fbf9f4]">
-      {/* Top Filter Bar (Matches Image 1 layout) */}
-      <div className="flex flex-wrap items-center justify-between gap-4 shrink-0">
-        <div className="flex flex-wrap items-center gap-3">
+    <div className="p-4 md:p-6 space-y-4 max-w-full mx-auto h-[calc(100vh-4.5rem)] flex flex-col overflow-hidden bg-[#f4f6f8] dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      {/* Top Filter Bar (Matches Reference Screenshot layout with QUICK FILTERS) */}
+      <div className="bg-white dark:bg-[#121829] p-3 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs dark:shadow-none flex flex-wrap items-center justify-between gap-3 shrink-0 transition-colors">
+        <div className="flex flex-wrap items-center gap-3 flex-1 min-w-[320px]">
+          {/* Quick Filters label */}
+          <div className="flex items-center space-x-2 text-[11px] font-bold tracking-wider uppercase text-slate-500 dark:text-slate-400 shrink-0">
+            <Filter className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+            <span>QUICK FILTERS:</span>
+          </div>
+
           {/* Search Input pill */}
-          <div className="relative min-w-[260px]">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <div className="relative flex-1 min-w-[220px] max-w-md">
+            <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search leads or companies..."
+              placeholder="Search leads, companies, or contacts..."
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
-              className="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-200/80 rounded-full text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 shadow-2xs"
+              className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-[#1a233c] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 dark:focus:border-sky-400 transition-all"
             />
           </div>
 
@@ -159,7 +165,7 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
-              className="appearance-none pl-3.5 pr-8 py-1.5 bg-white border border-slate-200/80 rounded-full text-xs font-semibold text-slate-700 focus:outline-none shadow-2xs cursor-pointer hover:bg-slate-50"
+              className="appearance-none pl-3 pr-7 py-1.5 bg-slate-50 dark:bg-[#1a233c] border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer hover:bg-slate-100 dark:hover:bg-[#222d4c] transition-colors"
             >
               <option value="all">Filter: All Priorities</option>
               <option value="urgent">Urgent Priority</option>
@@ -167,7 +173,7 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
               <option value="medium">Medium Priority</option>
               <option value="low">Low Priority</option>
             </select>
-            <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <SlidersHorizontal className="w-3 h-3 text-slate-400 dark:text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
           {/* Sort By Pill */}
@@ -175,13 +181,13 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="appearance-none pl-3.5 pr-8 py-1.5 bg-white border border-slate-200/80 rounded-full text-xs font-semibold text-slate-700 focus:outline-none shadow-2xs cursor-pointer hover:bg-slate-50"
+              className="appearance-none pl-3 pr-7 py-1.5 bg-slate-50 dark:bg-[#1a233c] border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer hover:bg-slate-100 dark:hover:bg-[#222d4c] transition-colors"
             >
               <option value="date">Sort: Closing Date</option>
               <option value="value">Sort: Opportunity Value</option>
               <option value="score">Sort: AI Win Score</option>
             </select>
-            <Clock className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Clock className="w-3 h-3 text-slate-400 dark:text-slate-500 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
           {/* Stage Colors Settings Quick Button with Live Stage Color Swatches */}
@@ -189,18 +195,18 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
             <button
               id="pipeline-stage-colors-btn"
               onClick={onOpenCrmSettings}
-              className="flex items-center space-x-2 px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80 rounded-full text-xs font-semibold shadow-2xs transition-all hover:border-slate-300"
+              className="flex items-center space-x-2 px-3 py-1.5 bg-slate-50 dark:bg-[#1a233c] hover:bg-slate-100 dark:hover:bg-[#222d4c] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold transition-all cursor-pointer"
               title="Customize Pipeline Stage Colors"
             >
               <Palette className="w-3.5 h-3.5 text-[#d4a853]" />
               <span>Stage Colors</span>
               {/* Visual color swatches showing current stage palette on screen */}
-              <div className="flex items-center space-x-1 pl-1.5 border-l border-slate-200">
+              <div className="flex items-center space-x-1 pl-1.5 border-l border-slate-200 dark:border-slate-700">
                 {stages.map((s) => (
                   <span 
                     key={s.id} 
                     style={{ backgroundColor: s.color }} 
-                    className="w-2 h-2 rounded-full inline-block shadow-2xs" 
+                    className="w-2.5 h-2.5 rounded-full inline-block shadow-2xs shrink-0" 
                     title={`${s.label}: ${s.color}`}
                   />
                 ))}
@@ -210,12 +216,14 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
         </div>
 
         {/* View mode toggle */}
-        <div className="flex items-center space-x-2">
-          <div className="flex bg-white p-1 rounded-full border border-slate-200/80 shadow-2xs">
+        <div className="flex items-center space-x-2 shrink-0">
+          <div className="flex bg-slate-100 dark:bg-[#1a233c] p-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
             <button
               onClick={() => setViewMode('kanban')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                viewMode === 'kanban' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-500 hover:text-slate-900'
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                viewMode === 'kanban' 
+                  ? 'bg-white dark:bg-[#253050] text-slate-900 dark:text-white shadow-2xs' 
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <KanbanIcon className="w-3.5 h-3.5" />
@@ -223,21 +231,32 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                viewMode === 'table' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-500 hover:text-slate-900'
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                viewMode === 'table' 
+                  ? 'bg-white dark:bg-[#253050] text-slate-900 dark:text-white shadow-2xs' 
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <List className="w-3.5 h-3.5" />
               <span>Table</span>
             </button>
           </div>
+
+          <button
+            id="pipeline-new-deal-btn"
+            onClick={onOpenNewDeal}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-[#1c2237] hover:bg-[#28304c] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New Opportunity</span>
+          </button>
         </div>
       </div>
 
       {/* Main Kanban Content Area */}
       {viewMode === 'kanban' ? (
-        <div className="flex-1 overflow-x-auto overflow-y-hidden pb-2">
-          <div className="flex space-x-5 h-full min-w-max">
+        <div className="flex-1 overflow-x-auto overflow-y-hidden pb-2 kanban-scroll scroll-smooth">
+          <div className="flex space-x-4 h-full min-w-max pr-4">
             {stages.map((stage) => {
               const stageDeals = filteredDeals.filter(d => d.stage === stage.id);
               const stageTotal = stageDeals.reduce((sum, d) => sum + d.value, 0);
@@ -249,46 +268,50 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                   onDragOver={(e) => handleDragOver(e, stage.id)}
                   onDragLeave={(e) => handleDragLeave(e, stage.id)}
                   onDrop={(e) => handleDrop(e, stage.id)}
-                  className={`w-76 flex flex-col h-full space-y-3 p-1.5 rounded-2xl transition-all duration-200 ${
+                  style={{
+                    borderBottom: `3px solid ${stage.color}`
+                  }}
+                  className={`w-[320px] sm:w-[335px] flex flex-col h-full bg-[#ebedf0]/85 dark:bg-[#13192b]/95 rounded-2xl border border-slate-300/80 dark:border-slate-800/90 transition-all duration-150 overflow-hidden shadow-2xs dark:shadow-md dark:shadow-black/20 ${
                     isDropTarget 
-                      ? 'bg-emerald-50/60 ring-2 ring-emerald-400/80 shadow-md' 
-                      : 'bg-transparent'
+                      ? 'ring-2 ring-sky-400 bg-sky-50/50 dark:bg-sky-950/40' 
+                      : ''
                   }`}
                 >
-                  {/* Column Header (Matches Image 1 with custom stage color) */}
-                  <div className="flex items-center justify-between px-1 shrink-0">
-                    <div className="flex items-center space-x-2">
-                      <span 
-                        style={{ color: stage.color }}
-                        className="text-[11px] font-bold tracking-wider uppercase flex items-center gap-1.5"
-                      >
-                        <span 
-                          className="w-2 h-2 rounded-full inline-block"
-                          style={{ backgroundColor: stage.color }}
-                        />
-                        {stage.label}
-                      </span>
-                      <span 
-                        style={{ backgroundColor: stage.badgeBg, color: stage.badgeText }}
-                        className="px-2 py-0.5 rounded-full text-[10px] font-bold"
-                      >
+                  {/* Solid Colored Column Header (Exact visual match to Screenshot with Quick Add Button) */}
+                  <div 
+                    style={{ backgroundColor: stage.color }}
+                    className="px-3.5 py-2.5 text-white font-bold text-xs flex items-center justify-between shrink-0 select-none shadow-xs"
+                  >
+                    <div className="flex items-center space-x-2 truncate">
+                      <span className="truncate tracking-wide">{stage.label}</span>
+                      <span className="bg-white/20 text-white px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-2xs">
                         {stageDeals.length}
                       </span>
                     </div>
-                    <span className="text-xs font-bold text-slate-600">
-                      ${(stageTotal / 1000).toFixed(1)}k
-                    </span>
+                    <div className="flex items-center space-x-2 shrink-0">
+                      <span className="text-[11px] font-semibold text-white/95">
+                        ${(stageTotal / 1000).toFixed(1)}k
+                      </span>
+                      <button
+                        onClick={onOpenNewDeal}
+                        className="w-5 h-5 rounded-md bg-white/20 hover:bg-white/35 text-white flex items-center justify-center transition-colors cursor-pointer"
+                        title={`Add deal to ${stage.label}`}
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Cards Scrollable Column */}
-                  <div className="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-thin">
+                  {/* Cards Scrollable Column with Smooth Scroll Effect */}
+                  <div className="flex-1 overflow-y-auto p-2.5 pr-2 space-y-2.5 kanban-scroll">
                     {stageDeals.length === 0 ? (
-                      <div className={`h-28 rounded-2xl border border-dashed transition-all flex items-center justify-center text-xs font-medium ${
+                      <div className={`h-36 rounded-xl border border-dashed transition-all flex flex-col items-center justify-center text-xs font-medium p-4 text-center ${
                         isDropTarget 
-                          ? 'border-emerald-500 bg-emerald-100/40 text-emerald-700' 
-                          : 'border-slate-300/80 bg-white/40 text-slate-400'
+                          ? 'border-sky-400 bg-sky-100/50 dark:bg-sky-950/50 text-sky-800 dark:text-sky-300' 
+                          : 'border-slate-300 dark:border-slate-700/60 bg-white/40 dark:bg-[#182036]/40 text-slate-400 dark:text-slate-500'
                       }`}>
-                        {isDropTarget ? `Drop to move to ${stage.label}` : `No deals in ${stage.label.toLowerCase()}`}
+                        <span className="font-semibold">{isDropTarget ? `Drop to move to ${stage.label}` : `No deals in ${stage.label}`}</span>
+                        <span className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Drag opportunities here or click + above</span>
                       </div>
                     ) : (
                       stageDeals.map((deal) => {
@@ -304,54 +327,59 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                             onDragStart={(e) => handleDragStart(e, deal)}
                             onDragEnd={handleDragEnd}
                             onClick={() => onOpenDealDetail(deal)}
-                            className={`bg-white rounded-2xl p-4 border transition-all duration-200 space-y-3 group cursor-grab active:cursor-grabbing select-none ${
+                            style={{
+                              borderLeft: `4px solid ${stage.color}`
+                            }}
+                            className={`bg-white dark:bg-[#182035] rounded-xl p-3 border border-slate-200/90 dark:border-slate-750/70 transition-all duration-200 space-y-2.5 group cursor-grab active:cursor-grabbing select-none shadow-2xs dark:shadow-sm dark:shadow-black/25 hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-black/40 hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-600 dark:hover:bg-[#1d2740] ${
                               isDragging 
-                                ? 'opacity-30 scale-95 border-dashed border-2 border-emerald-500 shadow-none' 
-                                : 'border-slate-250/80 shadow-2xs hover:shadow-md hover:border-slate-350 hover:-translate-y-0.5'
+                                ? 'opacity-30 scale-95 border-dashed border-2 border-sky-400 shadow-none' 
+                                : ''
                             }`}
                           >
-                            {/* Top Avatar & Title */}
-                            <div className="flex items-start space-x-3">
-                              <div 
-                                style={{ backgroundColor: avatarBg }}
-                                className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-900 font-bold text-sm shrink-0 shadow-2xs group-hover:scale-105 transition-transform duration-200"
-                              >
-                                {avatarInitials}
-                              </div>
-
+                            {/* Card Header with Company & Contact */}
+                            <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0 flex-1">
-                                <h4 className="font-serif text-sm font-bold text-slate-900 group-hover:text-[#2d7d56] transition-colors truncate">
+                                <h4 className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors truncate">
                                   {deal.company}
                                 </h4>
-                                <div className="text-[11px] font-medium text-slate-500 truncate">
-                                  {deal.contactName} · {deal.company}
+                                <div className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">
+                                  {deal.contactName} · {deal.title}
                                 </div>
+                              </div>
+
+                              {/* Opportunity Value */}
+                              <div className="text-right shrink-0">
+                                <span className="text-xs font-bold text-slate-900 dark:text-emerald-400 block">
+                                  ${deal.value.toLocaleString()}
+                                </span>
                               </div>
                             </div>
 
-                            {/* Value and Time Ago Row */}
-                            <div className="flex items-center justify-between pt-1 border-t border-slate-100/90 text-xs">
-                              <div>
-                                <div className="text-[10px] uppercase font-bold text-slate-400">Opportunity</div>
-                                <div className="font-bold text-slate-900 text-sm mt-0.5">
-                                  ${deal.value.toLocaleString()}
-                                </div>
-                              </div>
+                            {/* Stage Badge & Expected Date Row */}
+                            <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-700/60">
+                              {/* Stage Badge with Stage's Custom Color (Matches screenshot) */}
+                              <span 
+                                style={{ 
+                                  backgroundColor: stage.badgeBg, 
+                                  color: stage.badgeText,
+                                  border: `1px solid ${stage.color}35`
+                                }}
+                                className="text-[10px] font-bold px-2 py-0.5 rounded-md inline-block uppercase tracking-wider dark:brightness-110"
+                              >
+                                {stage.label}
+                              </span>
 
-                              <div className="text-right">
-                                <div className="text-[10px] uppercase font-bold text-slate-400">Expected</div>
-                                <div className="font-semibold text-slate-700 text-xs mt-0.5">
-                                  {deal.timeAgo || deal.expectedCloseDate}
-                                </div>
+                              <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                                Exp: {deal.timeAgo || deal.expectedCloseDate}
                               </div>
                             </div>
 
                             {/* Action Item Pill / Tag if available */}
                             {deal.actionItems && deal.actionItems.length > 0 && (
-                              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                                <div className="flex items-center space-x-1.5 text-slate-600 font-medium truncate">
+                              <div className="pt-1.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px]">
+                                <div className="flex items-center space-x-1.5 text-slate-600 dark:text-slate-300 font-medium truncate">
                                   <span 
-                                    className="w-1.5 h-1.5 rounded-full"
+                                    className="w-1.5 h-1.5 rounded-full shrink-0"
                                     style={{ backgroundColor: stage.color }}
                                   />
                                   <span className="truncate">{deal.actionItems[0].title}</span>
@@ -359,52 +387,59 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                               </div>
                             )}
 
-                            {/* Quick Actions Toolbar */}
+                            {/* Quick Actions & Assignee Toolbar */}
                             <div 
-                              className="pt-2 border-t border-slate-100 flex items-center justify-between"
+                              className="pt-1.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs"
                               onClick={(e) => e.stopPropagation()}
                             >
+                              {/* Assignee Avatar & Name */}
+                              <div className="flex items-center space-x-1.5 min-w-0">
+                                <div 
+                                  style={{ backgroundColor: avatarBg }}
+                                  className="w-5 h-5 rounded-full flex items-center justify-center text-slate-900 font-bold text-[9px] shrink-0 shadow-2xs"
+                                >
+                                  {avatarInitials}
+                                </div>
+                                <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 truncate max-w-[85px]">
+                                  {deal.assignedTo || 'Unassigned'}
+                                </span>
+                              </div>
+
                               <div className="flex items-center space-x-1">
                                 <button
+                                  onClick={() => onOpenDealDetail(deal)}
+                                  className="p-1 text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-slate-800 rounded transition-colors cursor-pointer"
+                                  title="View Deal Dossier"
+                                >
+                                  <MoreHorizontal className="w-3.5 h-3.5" />
+                                </button>
+                                <button
                                   onClick={() => onComposeEmailToContact(deal.contactEmail, deal.contactName, deal.id)}
-                                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                  title="Send Email via Gmail"
+                                  className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-slate-800 rounded transition-colors cursor-pointer"
+                                  title="Send Email"
                                 >
                                   <Mail className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => onLaunchMeetingWithContact(deal.contactName, deal.contactEmail, `Demo: ${deal.title}`)}
-                                  className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                                  title="Schedule Google Meet"
+                                  className="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded transition-colors cursor-pointer"
+                                  title="Google Meet"
                                 >
                                   <Video className="w-3.5 h-3.5" />
                                 </button>
-                                <button
-                                  onClick={() => onLocateOnMap(deal.company)}
-                                  className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
-                                  title="View on Google Maps"
-                                >
-                                  <MapPin className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={() => onRunAiDiagnosis(deal)}
-                                  className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                  title="Run Gemini AI Intelligence"
-                                >
-                                  <BrainCircuit className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
 
-                              {/* Stage Mover Selector */}
-                              <select
-                                value={deal.stage}
-                                onChange={(e) => handleStageChange(deal.id, e.target.value as DealStage)}
-                                className="text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 py-1 px-1.5 rounded-lg focus:outline-none transition-colors duration-150 cursor-pointer"
-                              >
-                                {stages.map(s => (
-                                  <option key={s.id} value={s.id}>{s.label}</option>
-                                ))}
-                              </select>
+                                {/* Stage Mover Selector */}
+                                <select
+                                  value={deal.stage}
+                                  onChange={(e) => handleStageChange(deal.id, e.target.value as DealStage)}
+                                  className="text-[10px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-[#232c48] dark:hover:bg-[#2c3758] border border-slate-300 dark:border-slate-650 text-slate-700 dark:text-slate-200 py-0.5 px-1 rounded focus:outline-none transition-colors cursor-pointer"
+                                  title="Change Stage"
+                                >
+                                  {stages.map(s => (
+                                    <option key={s.id} value={s.id}>{s.label}</option>
+                                  ))}
+                                </select>
+                              </div>
                             </div>
                           </div>
                         );
@@ -413,7 +448,7 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
 
                     {/* Active Drop Placeholder during drag over */}
                     {isDropTarget && draggedDealId && (
-                      <div className="h-16 rounded-2xl border-2 border-dashed border-emerald-400 bg-emerald-50/50 flex items-center justify-center text-xs font-semibold text-emerald-700 animate-pulse">
+                      <div className="h-16 rounded-xl border-2 border-dashed border-sky-400 bg-sky-50/70 dark:bg-sky-950/60 flex items-center justify-center text-xs font-bold text-sky-700 dark:text-sky-300 animate-pulse">
                         Drop to move here
                       </div>
                     )}
@@ -425,10 +460,10 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
         </div>
       ) : (
         /* Table View */
-        <div className="flex-1 bg-white rounded-2xl border border-slate-200/80 overflow-hidden flex flex-col shadow-2xs">
-          <div className="overflow-y-auto flex-1">
+        <div className="flex-1 bg-white dark:bg-[#121829] rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden flex flex-col shadow-2xs dark:shadow-none">
+          <div className="overflow-y-auto flex-1 kanban-scroll">
             <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-[#f7f5ed] border-b border-slate-200 sticky top-0 font-bold text-slate-700 uppercase tracking-wider text-[10px]">
+              <thead className="bg-[#f8fafc] dark:bg-[#182138] border-b border-slate-200 dark:border-slate-750 sticky top-0 font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="py-3 px-4">Company</th>
                   <th className="py-3 px-4">Contact</th>
@@ -439,18 +474,18 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredDeals.map((deal) => {
                   const stageObj = stages.find(s => s.id === deal.stage) || defaultStages[0];
                   return (
                     <tr
                       key={deal.id}
                       onClick={() => onOpenDealDetail(deal)}
-                      className="hover:bg-slate-50 cursor-pointer transition-colors"
+                      className="hover:bg-slate-50 dark:hover:bg-[#1a233c] cursor-pointer transition-colors"
                     >
-                      <td className="py-3 px-4 font-serif font-bold text-slate-900">{deal.company}</td>
-                      <td className="py-3 px-4 font-medium text-slate-600">{deal.contactName}</td>
-                      <td className="py-3 px-4 font-bold text-slate-900">${deal.value.toLocaleString()}</td>
+                      <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">{deal.company}</td>
+                      <td className="py-3 px-4 font-medium text-slate-600 dark:text-slate-300">{deal.contactName}</td>
+                      <td className="py-3 px-4 font-bold text-slate-900 dark:text-emerald-400">${deal.value.toLocaleString()}</td>
                       <td className="py-3 px-4">
                         <span 
                           style={{ backgroundColor: stageObj.badgeBg, color: stageObj.badgeText }}
@@ -459,12 +494,12 @@ export const PipelineView: React.FC<PipelineViewProps> = ({
                           {stageObj.label}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-slate-500">{deal.expectedCloseDate}</td>
-                      <td className="py-3 px-4 font-medium text-slate-700">{deal.assignedTo || 'Alex Rivera'}</td>
+                      <td className="py-3 px-4 text-slate-500 dark:text-slate-400">{deal.expectedCloseDate}</td>
+                      <td className="py-3 px-4 font-medium text-slate-700 dark:text-slate-300">{deal.assignedTo || 'Alex Rivera'}</td>
                       <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => onOpenDealDetail(deal)}
-                          className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-semibold text-[11px] transition-colors"
+                          className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-lg font-semibold text-[11px] transition-colors cursor-pointer"
                         >
                           View Details
                         </button>

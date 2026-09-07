@@ -1,3 +1,5 @@
+export type ThemeMode = 'light' | 'dark';
+
 export type DealStage = 'lead_in' | 'qualified' | 'proposal_sent' | 'negotiation' | 'closed_won' | 'closed_lost';
 
 export interface StageColorConfig {
@@ -63,6 +65,15 @@ export interface Deal {
 export type LeadStatus = 'New' | 'Contacted' | 'Qualified' | 'Proposal' | 'Unqualified';
 export type LeadTemperature = 'Hot' | 'Warm' | 'Cold';
 export type LeadSource = 'Website' | 'LinkedIn' | 'Referral' | 'Google Ads' | 'Trade Show' | 'Cold Outreach' | 'Partner' | 'Event';
+
+export interface LeadStageColorConfig {
+  id: LeadStatus;
+  label: string;
+  color: string;      // Header color & card left border
+  badgeBg: string;    // Badge background color
+  badgeText: string;  // Badge text color
+  barColor: string;   // Accent bar color
+}
 
 export interface Lead {
   id: string;
@@ -141,6 +152,15 @@ export interface InvoiceItem {
 }
 
 export type InvoiceStatus = 'Draft' | 'Sent' | 'Paid' | 'Overdue' | 'Cancelled';
+
+export interface InvoiceStageColorConfig {
+  id: InvoiceStatus;
+  label: string;
+  color: string;
+  badgeBg: string;
+  badgeText: string;
+  barColor: string;
+}
 
 export interface Invoice {
   id: string;

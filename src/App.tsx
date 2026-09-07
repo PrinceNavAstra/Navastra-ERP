@@ -12,8 +12,11 @@ import {
   DealStage, 
   InvoiceStatus,
   StageColorConfig,
+  LeadStageColorConfig,
+  LeadStatus,
   NavastraApp,
-  NavastraAppId
+  NavastraAppId,
+  ThemeMode
 } from './types';
 import { 
   initialDeals, 
@@ -34,7 +37,7 @@ import { NavastraAppsDashboard } from './components/NavastraAppsDashboard';
 import { NavastraAppStore } from './components/NavastraAppStore';
 import { DashboardView } from './components/DashboardView';
 import { PipelineView } from './components/PipelineView';
-import { LeadsView } from './components/LeadsView';
+import { LeadsView, defaultLeadStages } from './components/LeadsView';
 import { ContactsView } from './components/ContactsView';
 import { AccountsView } from './components/AccountsView';
 import { InvoicesView } from './components/InvoicesView';
@@ -64,12 +67,12 @@ import { DealDetailModal } from './components/modals/DealDetailModal';
 import { CrmSettingsModal } from './components/modals/CrmSettingsModal';
 
 const defaultStageColors: StageColorConfig[] = [
-  { id: 'lead_in', label: 'NEW', color: '#4b5563', badgeBg: '#f3f4f6', badgeText: '#374151', barColor: '#6b7280' },
-  { id: 'qualified', label: 'QUALIFIED', color: '#2563eb', badgeBg: '#eff6ff', badgeText: '#1d4ed8', barColor: '#3b82f6' },
-  { id: 'proposal_sent', label: 'PROPOSAL', color: '#d97706', badgeBg: '#fffbeb', badgeText: '#b45309', barColor: '#f59e0b' },
-  { id: 'negotiation', label: 'NEGOTIATION', color: '#7c3aed', badgeBg: '#f5f3ff', badgeText: '#6d28d9', barColor: '#8b5cf6' },
-  { id: 'closed_won', label: 'WON', color: '#16a34a', badgeBg: '#f0fdf4', badgeText: '#15803d', barColor: '#22c55e' },
-  { id: 'closed_lost', label: 'LOST', color: '#dc2626', badgeBg: '#fef2f2', badgeText: '#b91c1c', barColor: '#ef4444' }
+  { id: 'lead_in', label: 'NEW', color: '#00a5e5', badgeBg: '#e0f2fe', badgeText: '#0284c7', barColor: '#0ea5e9' },
+  { id: 'qualified', label: 'QUALIFIED', color: '#6366f1', badgeBg: '#eff6ff', badgeText: '#4338ca', barColor: '#818cf8' },
+  { id: 'proposal_sent', label: 'PROPOSAL', color: '#f59e0b', badgeBg: '#fffbeb', badgeText: '#b45309', barColor: '#fbbf24' },
+  { id: 'negotiation', label: 'NEGOTIATION', color: '#8b5cf6', badgeBg: '#f5f3ff', badgeText: '#6d28d9', barColor: '#8b5cf6' },
+  { id: 'closed_won', label: 'WON', color: '#22c55e', badgeBg: '#f0fdf4', badgeText: '#15803d', barColor: '#4ade80' },
+  { id: 'closed_lost', label: 'LOST', color: '#f87171', badgeBg: '#fef2f2', badgeText: '#b91c1c', barColor: '#ef4444' }
 ];
 
 export default function App() {
@@ -85,10 +88,41 @@ export default function App() {
   });
 
   // Navigation & Layout
-  const [currentView, setCurrentView] = useState<ViewType>('pipeline');
+  const [currentView, setCurrentView] = useState<ViewType>('apps_grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeDetailEntity, setActiveDetailEntity] = useState<Deal | Lead | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+
+  // Theme & Appearance Mode (dark / light)
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    try {
+      const saved = localStorage.getItem('omnicrm_theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+    } catch (e) {
+      console.warn('Failed to load theme preference', e);
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('omnicrm_theme', theme);
+    } catch (e) {
+      console.warn('Failed to persist theme', e);
+    }
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
 
   // CRM Settings & Stage Colors
   const [isCrmSettingsOpen, setIsCrmSettingsOpen] = useState<boolean>(false);
@@ -100,6 +134,17 @@ export default function App() {
       console.warn('Failed to load stage configs from storage', e);
     }
     return defaultStageColors;
+  });
+
+  // Staging-wise Colors for Leads
+  const [leadStageConfigs, setLeadStageConfigs] = useState<LeadStageColorConfig[]>(() => {
+    try {
+      const saved = localStorage.getItem('omni_lead_stage_configs');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn('Failed to load lead stage configs from storage', e);
+    }
+    return defaultLeadStages;
   });
 
   // Primary CRM & ERP State
@@ -151,14 +196,14 @@ export default function App() {
 
   const handleLaunchApp = (appId: NavastraAppId, defaultView?: ViewType) => {
     setActiveDetailEntity(null);
-    if (appId === 'crm') {
+    if (defaultView) {
+      setCurrentView(defaultView);
+    } else if (appId === 'crm') {
       setCurrentView('pipeline');
     } else if (appId === 'app_store') {
       setCurrentView('app_store');
     } else if (appId === 'settings') {
       setCurrentView('settings');
-    } else if (defaultView) {
-      setCurrentView(defaultView);
     } else {
       setCurrentView('pipeline');
     }
@@ -241,7 +286,8 @@ export default function App() {
       contactEmail: updatedLead.email || '',
       contactPhone: updatedLead.phone || '',
       value: updatedLead.estimatedValue || 0,
-      stage: updatedLead.status === 'Won' ? 'closed_won' : updatedLead.status === 'Lost' ? 'closed_lost' : 'lead_in',
+      stage: updatedLead.status === 'Qualified' ? 'qualified' : updatedLead.status === 'Proposal' ? 'proposal_sent' : updatedLead.status === 'Unqualified' ? 'closed_lost' : 'lead_in',
+      probability: updatedLead.status === 'Qualified' ? 70 : updatedLead.status === 'Proposal' ? 85 : 40,
       expectedCloseDate: 'Mar 30, 2025',
       assignedTo: updatedLead.assignedTo || 'Alex Rivera',
       priority: updatedLead.temperature === 'Hot' ? 'high' : 'medium',
@@ -249,6 +295,7 @@ export default function App() {
       avatarInitials: updatedLead.avatarInitials || (updatedLead.company ? updatedLead.company.slice(0, 2).toUpperCase() : 'NL'),
       avatarBg: updatedLead.avatarBg || '#d4a853',
       notes: updatedLead.notes || '',
+      tags: ['Inbound', 'Enterprise'],
       createdAt: updatedLead.createdAt,
       updatedAt: new Date().toISOString().split('T')[0],
       actionItems: updatedLead.actionItems,
@@ -279,7 +326,7 @@ export default function App() {
     setActiveDetailEntity(newLead);
   };
 
-  // Save Stage Colors
+  // Save Stage Colors for Deals
   const handleSaveStageConfigs = (newConfigs: StageColorConfig[]) => {
     setStageConfigs(newConfigs);
     try {
@@ -289,14 +336,31 @@ export default function App() {
     }
   };
 
+  // Save Stage Colors for Leads
+  const handleSaveLeadStageConfigs = (newConfigs: LeadStageColorConfig[]) => {
+    setLeadStageConfigs(newConfigs);
+    try {
+      localStorage.setItem('omni_lead_stage_configs', JSON.stringify(newConfigs));
+    } catch (e) {
+      console.warn('Failed to persist lead stage configs', e);
+    }
+  };
+
   // Reset Stage Colors to Default
   const handleResetStageConfigs = () => {
     setStageConfigs(defaultStageColors);
+    setLeadStageConfigs(defaultLeadStages);
     try {
       localStorage.removeItem('omni_stage_configs');
+      localStorage.removeItem('omni_lead_stage_configs');
     } catch (e) {
       console.warn('Failed to clear stage configs', e);
     }
+  };
+
+  // Update Lead Status / Stage
+  const handleUpdateLeadStatus = (leadId: string, newStatus: LeadStatus) => {
+    setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: newStatus } : l));
   };
 
   // Convert Lead to Deal & Account
@@ -448,62 +512,69 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans overflow-hidden">
-      {/* Left Sidebar */}
-      <Sidebar
-        currentView={currentView}
-        onSelectView={(v) => {
-          setActiveDetailEntity(null);
-          setCurrentView(v);
-        }}
-        openAiChat={() => setIsAiChatOpen(true)}
-        openHighThinking={() => { setSelectedDealForHighThinking(deals[0]); setIsHighThinkingOpen(true); }}
-        unreadEmailsCount={unreadEmailsCount}
-        activeDealsCount={activeDealsCount}
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(prev => !prev)}
-        onOpenCrmSettings={() => setCurrentView('settings')}
-        installedApps={apps}
-        onNavigateToAppsHub={handleGoHome}
-        onNavigateHome={handleGoHome}
-        onNavigateToAppStore={() => {
-          setActiveDetailEntity(null);
-          setCurrentView('app_store');
-        }}
-      />
-
-      {/* Main Content Pane */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Header with Logo Home Redirect & Interactive Breadcrumbs */}
-        <Header
+    <div className={`flex h-screen bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 font-sans overflow-hidden ${theme === 'dark' ? 'dark' : ''} transition-colors duration-200`}>
+      {/* Left Sidebar - hidden on homepage */}
+      {currentView !== 'apps_grid' && (
+        <Sidebar
           currentView={currentView}
-          searchQuery={searchQuery}
-          onSearch={setSearchQuery}
-          onOpenNewDeal={() => setIsNewDealOpen(true)}
-          onOpenNewLead={handleOpenNewLeadFullPage}
-          onOpenNewInvoice={() => setIsNewInvoiceOpen(true)}
-          onOpenNewMeeting={() => setCurrentView('meet')}
-          onOpenAiChat={() => setIsAiChatOpen(true)}
-          onOpenHighThinking={() => { setSelectedDealForHighThinking(deals[0]); setIsHighThinkingOpen(true); }}
+          onSelectView={(v) => {
+            setActiveDetailEntity(null);
+            setCurrentView(v);
+          }}
+          openAiChat={() => setIsAiChatOpen(true)}
+          openHighThinking={() => { setSelectedDealForHighThinking(deals[0]); setIsHighThinkingOpen(true); }}
+          unreadEmailsCount={unreadEmailsCount}
+          activeDealsCount={activeDealsCount}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(prev => !prev)}
           onOpenCrmSettings={() => setCurrentView('settings')}
+          installedApps={apps}
           onNavigateToAppsHub={handleGoHome}
           onNavigateHome={handleGoHome}
           onNavigateToAppStore={() => {
             setActiveDetailEntity(null);
             setCurrentView('app_store');
           }}
-          onLaunchApp={handleLaunchApp}
-          installedApps={apps}
-          activeDetailEntity={activeDetailEntity}
-          onClearDetailEntity={() => setActiveDetailEntity(null)}
-          onSelectView={(v) => {
-            setActiveDetailEntity(null);
-            setCurrentView(v);
-          }}
+          theme={theme}
         />
+      )}
+
+      {/* Main Content Pane */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top Header - hidden on homepage */}
+        {currentView !== 'apps_grid' && (
+          <Header
+            currentView={currentView}
+            searchQuery={searchQuery}
+            onSearch={setSearchQuery}
+            onOpenNewDeal={() => setIsNewDealOpen(true)}
+            onOpenNewLead={handleOpenNewLeadFullPage}
+            onOpenNewInvoice={() => setIsNewInvoiceOpen(true)}
+            onOpenNewMeeting={() => setCurrentView('meet')}
+            onOpenAiChat={() => setIsAiChatOpen(true)}
+            onOpenHighThinking={() => { setSelectedDealForHighThinking(deals[0]); setIsHighThinkingOpen(true); }}
+            onOpenCrmSettings={() => setCurrentView('settings')}
+            onNavigateToAppsHub={handleGoHome}
+            onNavigateHome={handleGoHome}
+            onNavigateToAppStore={() => {
+              setActiveDetailEntity(null);
+              setCurrentView('app_store');
+            }}
+            onLaunchApp={handleLaunchApp}
+            installedApps={apps}
+            activeDetailEntity={activeDetailEntity}
+            onClearDetailEntity={() => setActiveDetailEntity(null)}
+            onSelectView={(v) => {
+              setActiveDetailEntity(null);
+              setCurrentView(v);
+            }}
+            theme={theme}
+            onToggleTheme={toggleTheme}
+          />
+        )}
 
         {/* View Switcher Container */}
-        <main className="flex-1 overflow-y-auto bg-[#fbf9f4]">
+        <main className={`flex-1 overflow-y-auto ${currentView === 'apps_grid' ? 'bg-transparent' : 'bg-[#fbf9f4] dark:bg-[#0b0f19]'} kanban-scroll transition-colors duration-200`}>
           {activeDetailEntity ? (
             <LeadDetailPage
               leadOrDeal={activeDetailEntity}
@@ -541,6 +612,9 @@ export default function App() {
                   onOpenNewInvoice={() => setIsNewInvoiceOpen(true)}
                   pipelineTotal={pipelineTotal}
                   activeDealsCount={activeDealsCount}
+                  theme={theme}
+                  onToggleTheme={toggleTheme}
+                  onSetTheme={setTheme}
                 />
               )}
 
@@ -594,6 +668,9 @@ export default function App() {
                   <SettingsAppView 
                     stageColors={stageConfigs}
                     onUpdateStageColors={handleSaveStageConfigs}
+                    theme={theme}
+                    onToggleTheme={toggleTheme}
+                    onSetTheme={setTheme}
                   />
                 </div>
               )}
@@ -630,6 +707,7 @@ export default function App() {
               {currentView === 'leads' && (
                 <LeadsView
                   leads={leads}
+                  stageConfigs={leadStageConfigs}
                   onOpenNewLead={handleOpenNewLeadFullPage}
                   onOpenLeadDetail={(lead) => setActiveDetailEntity(lead)}
                   onConvertLeadToDeal={handleConvertLeadToDeal}
@@ -637,6 +715,8 @@ export default function App() {
                   onLaunchMeeting={handleLaunchMeetingWithContact}
                   onLocateOnMap={handleLocateOnMap}
                   onEnrichLeadWithAi={(lead) => setIsAiChatOpen(true)}
+                  onUpdateLeadStatus={handleUpdateLeadStatus}
+                  onOpenCrmSettings={() => setIsCrmSettingsOpen(true)}
                 />
               )}
 
@@ -707,17 +787,19 @@ export default function App() {
         </main>
       </div>
 
-      {/* Draggable & Dockable AI Copilot Chat Bot Bubble */}
-      <DraggableAiCopilot
-        onOpenHighThinking={() => setIsHighThinkingOpen(true)}
-        crmContext={{
-          activeDealsCount: deals.length,
-          pipelineTotal: deals.reduce((s, d) => s + d.value, 0),
-          urgentDeals: deals.filter(d => d.priority === 'urgent').map(d => ({ title: d.title, company: d.company, value: d.value, stage: d.stage })),
-          upcomingMeetings: meetings.map(m => ({ title: m.title, time: m.scheduledTime, attendees: m.attendees })),
-          overdueInvoices: invoices.filter(i => i.status === 'Overdue')
-        }}
-      />
+      {/* Draggable & Dockable AI Copilot Chat Bot Bubble - hidden on homepage */}
+      {currentView !== 'apps_grid' && (
+        <DraggableAiCopilot
+          onOpenHighThinking={() => setIsHighThinkingOpen(true)}
+          crmContext={{
+            activeDealsCount: deals.length,
+            pipelineTotal: deals.reduce((s, d) => s + d.value, 0),
+            urgentDeals: deals.filter(d => d.priority === 'urgent').map(d => ({ title: d.title, company: d.company, value: d.value, stage: d.stage })),
+            upcomingMeetings: meetings.map(m => ({ title: m.title, time: m.scheduledTime, attendees: m.attendees })),
+            overdueInvoices: invoices.filter(i => i.status === 'Overdue')
+          }}
+        />
+      )}
 
       {/* Multi-Turn Gemini AI Copilot Drawer */}
       <GeminiChatDrawer
@@ -783,6 +865,8 @@ export default function App() {
         onClose={() => setIsCrmSettingsOpen(false)}
         stageConfigs={stageConfigs}
         onSaveStageConfigs={handleSaveStageConfigs}
+        leadStageConfigs={leadStageConfigs}
+        onSaveLeadStageConfigs={handleSaveLeadStageConfigs}
         onResetDefaults={handleResetStageConfigs}
       />
     </div>

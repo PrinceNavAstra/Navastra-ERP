@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Briefcase, 
@@ -22,10 +22,33 @@ import {
   TrendingUp,
   Package,
   FolderKanban,
-  LifeBuoy
+  LifeBuoy,
+  ChevronDown,
+  ChevronRight,
+  Palette,
+  Layers
 } from 'lucide-react';
-import { ViewType, NavastraApp } from '../types';
+import { ViewType, NavastraApp, NavastraAppId, ThemeMode } from '../types';
 import { ErpLogoBadge } from './Logo';
+
+interface SubFeature {
+  id: ViewType;
+  label: string;
+  icon: any;
+  badge?: number | string;
+  badgeColor?: string;
+  action?: () => void;
+}
+
+interface AppGroup {
+  id: NavastraAppId;
+  name: string;
+  icon: any;
+  color: string;
+  isBase?: boolean;
+  defaultView: ViewType;
+  features: SubFeature[];
+}
 
 interface SidebarProps {
   currentView: ViewType;
@@ -41,6 +64,7 @@ interface SidebarProps {
   onNavigateToAppsHub?: () => void;
   onNavigateToAppStore?: () => void;
   onNavigateHome?: () => void;
+  theme?: ThemeMode;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -56,68 +80,243 @@ export const Sidebar: React.FC<SidebarProps> = ({
   installedApps = [],
   onNavigateToAppsHub,
   onNavigateToAppStore,
-  onNavigateHome
+  onNavigateHome,
+  theme = 'light'
 }) => {
-  const isSalesInstalled = installedApps.some(a => a.id === 'sales' && a.isInstalled);
-  const isInventoryInstalled = installedApps.some(a => a.id === 'inventory' && a.isInstalled);
-  const isProjectsInstalled = installedApps.some(a => a.id === 'projects' && a.isInstalled);
-  const isHrInstalled = installedApps.some(a => a.id === 'hr' && a.isInstalled);
-  const isHelpdeskInstalled = installedApps.some(a => a.id === 'helpdesk' && a.isInstalled);
+  // Helper to determine which application owns a specific view
+  const getViewParentAppId = (view: ViewType): NavastraAppId => {
+    switch (view) {
+      case 'pipeline':
+      case 'leads':
+      case 'dashboard':
+      case 'contacts':
+      case 'accounts':
+      case 'ai_studio':
+        return 'crm';
+      case 'invoices':
+        return 'invoicing';
+      case 'gmail':
+      case 'calendar':
+      case 'meet':
+      case 'maps':
+        return 'google_suite';
+      case 'sales_orders':
+        return 'sales';
+      case 'inventory_stock':
+        return 'inventory';
+      case 'project_tasks':
+        return 'projects';
+      case 'hr_employees':
+        return 'hr';
+      case 'helpdesk_tickets':
+        return 'helpdesk';
+      case 'settings':
+        return 'settings';
+      case 'apps_grid':
+      case 'app_store':
+      default:
+        return 'app_store';
+    }
+  };
 
-  const mainNavItems: { id: ViewType; label: string; icon: any; badge?: number | string; badgeColor?: string }[] = [
-    { id: 'pipeline', label: 'Pipeline & Deals', icon: Briefcase, badge: activeDealsCount, badgeColor: 'bg-[#cca458] text-slate-900' },
-    { id: 'leads', label: 'Leads & Prospects', icon: UserCheck },
-    { id: 'dashboard', label: 'CRM Overview', icon: LayoutDashboard },
-    { id: 'contacts', label: 'Contacts', icon: Users },
-    { id: 'accounts', label: 'Accounts & ERP', icon: Building2 },
-    { id: 'invoices', label: 'Invoices', icon: Receipt },
+  // Keep track of which app is currently expanded.
+  // By default, it expands the application of the current active view.
+  const [expandedAppId, setExpandedAppId] = useState<NavastraAppId>(() => getViewParentAppId(currentView));
+
+  // Sync expanded app whenever currentView changes
+  useEffect(() => {
+    const parent = getViewParentAppId(currentView);
+    setExpandedAppId(parent);
+  }, [currentView]);
+
+  // Check installed status
+  const isInstalled = (appId: NavastraAppId) => {
+    // Settings and Apps Store are always shown by default
+    if (appId === 'settings' || appId === 'app_store' || appId === 'apps_launcher') return true;
+    const found = installedApps.find(a => a.id === appId);
+    return found ? found.isInstalled : false;
+  };
+
+  // Define the Application Groups and their sub-features
+  const allAppGroups: AppGroup[] = [
+    {
+      id: 'crm',
+      name: 'CRM & Pipeline',
+      icon: Briefcase,
+      color: '#00a887',
+      isBase: true,
+      defaultView: 'pipeline',
+      features: [
+        { 
+          id: 'pipeline', 
+          label: 'Pipeline & Deals', 
+          icon: Briefcase, 
+          badge: activeDealsCount > 0 ? activeDealsCount : undefined, 
+          badgeColor: 'bg-[#cca458] text-slate-900' 
+        },
+        { id: 'leads', label: 'Leads & Prospects', icon: UserCheck },
+        { id: 'dashboard', label: 'CRM Overview', icon: LayoutDashboard },
+        { id: 'contacts', label: 'Contacts', icon: Users },
+        { id: 'accounts', label: 'Accounts & ERP', icon: Building2 },
+      ]
+    },
+    {
+      id: 'invoicing',
+      name: 'Invoicing & Billing',
+      icon: Receipt,
+      color: '#2563eb',
+      defaultView: 'invoices',
+      features: [
+        { id: 'invoices', label: 'Invoices & Receipts', icon: Receipt }
+      ]
+    },
+    {
+      id: 'google_suite',
+      name: 'Google Workspace',
+      icon: Video,
+      color: '#ea4335',
+      defaultView: 'meet',
+      features: [
+        { 
+          id: 'gmail', 
+          label: 'Google Mail', 
+          icon: Mail, 
+          badge: unreadEmailsCount > 0 ? unreadEmailsCount : undefined, 
+          badgeColor: 'bg-red-500 text-white' 
+        },
+        { id: 'calendar', label: 'Google Calendar', icon: Calendar },
+        { id: 'meet', label: 'Google Meet', icon: Video },
+        { id: 'maps', label: 'Territory Maps', icon: MapPin },
+      ]
+    },
+    {
+      id: 'sales',
+      name: 'Sales Orders',
+      icon: TrendingUp,
+      color: '#fa7c17',
+      defaultView: 'sales_orders',
+      features: [
+        { id: 'sales_orders', label: 'Quotations & Orders', icon: TrendingUp }
+      ]
+    },
+    {
+      id: 'inventory',
+      name: 'Inventory & Stock',
+      icon: Package,
+      color: '#8b5cf6',
+      defaultView: 'inventory_stock',
+      features: [
+        { id: 'inventory_stock', label: 'Stock & Warehouses', icon: Package }
+      ]
+    },
+    {
+      id: 'projects',
+      name: 'Project Management',
+      icon: FolderKanban,
+      color: '#06b6d4',
+      defaultView: 'project_tasks',
+      features: [
+        { id: 'project_tasks', label: 'Tasks & Sprints', icon: FolderKanban }
+      ]
+    },
+    {
+      id: 'hr',
+      name: 'Human Resources',
+      icon: Users,
+      color: '#ec4899',
+      defaultView: 'hr_employees',
+      features: [
+        { id: 'hr_employees', label: 'Employee Directory', icon: Users }
+      ]
+    },
+    {
+      id: 'helpdesk',
+      name: 'Helpdesk & Support',
+      icon: LifeBuoy,
+      color: '#f59e0b',
+      defaultView: 'helpdesk_tickets',
+      features: [
+        { id: 'helpdesk_tickets', label: 'Support Tickets', icon: LifeBuoy }
+      ]
+    },
+    // Default Apps always shown
+    {
+      id: 'app_store',
+      name: 'Apps & Modules',
+      icon: LayoutGrid,
+      color: '#4f46e5',
+      isBase: true,
+      defaultView: 'apps_grid',
+      features: [
+        { id: 'apps_grid', label: 'App Launcher', icon: LayoutGrid },
+        { id: 'app_store', label: 'Install Apps Store', icon: ShoppingBag }
+      ]
+    },
+    {
+      id: 'settings',
+      name: 'Settings & Config',
+      icon: Settings,
+      color: '#64748b',
+      isBase: true,
+      defaultView: 'settings',
+      features: [
+        { id: 'settings', label: 'System & Stages Config', icon: Settings },
+        ...(onOpenCrmSettings ? [{
+          id: 'settings' as ViewType,
+          label: 'Stage Colors & Presets',
+          icon: Palette,
+          action: onOpenCrmSettings
+        }] : [])
+      ]
+    }
   ];
 
-  // Dynamic modules installed
-  const installedModuleItems: { id: ViewType; label: string; icon: any }[] = [];
-  if (isSalesInstalled) installedModuleItems.push({ id: 'sales_orders', label: 'Sales Orders', icon: TrendingUp });
-  if (isInventoryInstalled) installedModuleItems.push({ id: 'inventory_stock', label: 'Inventory & Stock', icon: Package });
-  if (isProjectsInstalled) installedModuleItems.push({ id: 'project_tasks', label: 'Projects & Sprints', icon: FolderKanban });
-  if (isHrInstalled) installedModuleItems.push({ id: 'hr_employees', label: 'Human Resources', icon: Users });
-  if (isHelpdeskInstalled) installedModuleItems.push({ id: 'helpdesk_tickets', label: 'Helpdesk Queue', icon: LifeBuoy });
+  // Filter groups: Only show installed applications, plus default apps ('app_store' and 'settings')
+  const visibleAppGroups = allAppGroups.filter(group => isInstalled(group.id));
 
-  const workspaceNavItems: { id: ViewType; label: string; icon: any; badge?: number | string; badgeColor?: string }[] = [
-    { id: 'gmail', label: 'Google Mail', icon: Mail, badge: unreadEmailsCount > 0 ? unreadEmailsCount : undefined, badgeColor: 'bg-red-500 text-white' },
-    { id: 'calendar', label: 'Google Calendar', icon: Calendar },
-    { id: 'meet', label: 'Google Meet', icon: Video },
-    { id: 'maps', label: 'Territory Maps', icon: MapPin },
-  ];
+  const handleAppClick = (app: AppGroup) => {
+    if (expandedAppId === app.id) {
+      // Toggle or keep expanded
+      // Navigate to default view if not already in one of its features
+      const parentOfCurrent = getViewParentAppId(currentView);
+      if (parentOfCurrent !== app.id) {
+        onSelectView(app.defaultView);
+      }
+    } else {
+      setExpandedAppId(app.id);
+      onSelectView(app.defaultView);
+    }
+  };
 
   return (
     <aside 
       className={`${
-        isCollapsed ? 'w-18' : 'w-60'
-      } bg-[#1c2237] border-r border-[#262f4a] flex flex-col h-screen select-none shrink-0 text-slate-300 transition-all duration-250 ease-in-out relative`}
+        isCollapsed ? 'w-18' : 'w-64'
+      } bg-white dark:bg-[#141b2d] border-r border-slate-200 dark:border-[#242c44] flex flex-col h-screen select-none shrink-0 text-slate-700 dark:text-slate-300 transition-all duration-200 ease-in-out relative shadow-xs`}
     >
       {/* Brand Header with Navastra ERP Logo Badge & Collapse Toggle */}
-      <div className={`h-20 flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-5'} border-b border-[#27304e]`}>
+      <div className={`h-18 flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-4.5'} border-b border-slate-200 dark:border-[#242c44] bg-slate-50/90 dark:bg-[#1a2136] transition-colors`}>
         <div className="flex items-center space-x-3 min-w-0">
-          {/* Official Navastra Geometric ERP Logo - Clickable to redirect to Homepage/Dashboard */}
           <ErpLogoBadge 
-            size={38}
+            size={36}
             onClick={onNavigateHome || onNavigateToAppsHub}
-            title="Navastra ERP Home Dashboard (Click to redirect)"
-            className="shrink-0 ring-1 ring-white/10 cursor-pointer hover:scale-105 hover:ring-emerald-400/50 transition-all"
+            title="Navastra App Launcher (Click to redirect)"
+            className="shrink-0 ring-1 ring-slate-300/60 dark:ring-white/10 cursor-pointer hover:scale-105 hover:ring-emerald-400/50 transition-all"
           />
           {!isCollapsed && (
             <div 
               className="min-w-0 cursor-pointer group" 
               onClick={onNavigateHome || onNavigateToAppsHub}
-              title="Navastra ERP Home Dashboard (Click to redirect)"
+              title="Navastra App Launcher"
             >
-              <div className="font-bold text-white text-base leading-tight tracking-tight flex items-center gap-1.5 truncate group-hover:text-emerald-400 transition-colors">
+              <div className="font-bold text-slate-900 dark:text-white text-sm leading-tight tracking-tight flex items-center gap-1.5 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                 <span>Navastra</span>
-                <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-[#27304e] text-emerald-400 border border-emerald-600/30">
+                <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-[#27304e] text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-600/30">
                   ERP
                 </span>
               </div>
-              <div className="text-[11px] text-slate-400 font-medium truncate group-hover:text-slate-300">
-                Modular Cloud Platform
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate group-hover:text-slate-700 dark:group-hover:text-slate-300">
+                Modular Applications
               </div>
             </div>
           )}
@@ -127,7 +326,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {onToggleCollapse && !isCollapsed && (
           <button
             onClick={onToggleCollapse}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#283250] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-[#252f4a] transition-colors cursor-pointer"
             title="Collapse Sidebar"
           >
             <PanelLeftClose className="w-4 h-4" />
@@ -136,247 +335,198 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Navigation Scrollable Area */}
-      <div className={`flex-1 overflow-y-auto ${isCollapsed ? 'px-2' : 'px-3'} py-4 space-y-5 scrollbar-thin`}>
-        {/* Core CRM & Base Pipeline */}
-        <div>
-          {!isCollapsed && (
-            <div className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
-              <span>CRM & Pipeline</span>
-              <span className="text-[9px] text-emerald-400 font-bold">Base</span>
-            </div>
-          )}
-          <nav className="space-y-1">
-            {mainNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentView === item.id;
-              return (
+      <div className={`flex-1 overflow-y-auto ${isCollapsed ? 'px-2' : 'px-3'} py-3.5 space-y-1 kanban-scroll`}>
+        {!isCollapsed && (
+          <div className="px-2 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 flex items-center justify-between">
+            <span>Installed Applications</span>
+            <span className="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-700/40 px-1.5 py-0.2 rounded-full">
+              {visibleAppGroups.length} Active
+            </span>
+          </div>
+        )}
+
+        {/* Applications List */}
+        <div className="space-y-1">
+          {visibleAppGroups.map((app) => {
+            const AppIcon = app.icon;
+            const isAppExpanded = expandedAppId === app.id;
+            const isAppActive = getViewParentAppId(currentView) === app.id;
+
+            return (
+              <div key={app.id} className="rounded-xl transition-all">
+                {/* Top-Level Application Row: ONLY THE APPLICATION NAME */}
                 <button
-                  key={item.id}
-                  id={`nav-btn-${item.id}`}
-                  onClick={() => onSelectView(item.id)}
-                  title={isCollapsed ? item.label : undefined}
+                  type="button"
+                  id={`app-nav-${app.id}`}
+                  onClick={() => handleAppClick(app)}
+                  title={isCollapsed ? app.name : undefined}
                   className={`w-full flex items-center ${
-                    isCollapsed ? 'justify-center px-0 py-2.5' : 'justify-between px-3.5 py-2.5'
-                  } rounded-xl text-xs font-semibold transition-all relative cursor-pointer ${
-                    isActive
-                      ? 'bg-[#293354] text-white shadow-xs'
-                      : 'text-slate-300 hover:text-white hover:bg-[#232b45]'
+                    isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3 py-2.5'
+                  } rounded-xl text-xs font-bold transition-all relative cursor-pointer ${
+                    isAppActive
+                      ? 'bg-indigo-50/80 dark:bg-[#252f4c] text-indigo-950 dark:text-white shadow-2xs border border-indigo-100 dark:border-indigo-500/20'
+                      : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/90 dark:hover:bg-[#1e263d]'
                   }`}
                 >
-                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#cca458]' : 'text-slate-400'}`} />
-                    {!isCollapsed && <span>{item.label}</span>}
-                  </div>
-                  {!isCollapsed && item.badge !== undefined && (
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.badgeColor || 'bg-slate-800 text-slate-300'}`}>
-                      {item.badge}
-                    </span>
-                  )}
-                  {isCollapsed && item.badge !== undefined && (
-                    <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-[#cca458]" />
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Installed Dynamic Modules */}
-        {installedModuleItems.length > 0 && (
-          <div>
-            {!isCollapsed && (
-              <div className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Installed Modules
-              </div>
-            )}
-            <nav className="space-y-1">
-              {installedModuleItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = currentView === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    id={`nav-btn-${item.id}`}
-                    onClick={() => onSelectView(item.id)}
-                    title={isCollapsed ? item.label : undefined}
-                    className={`w-full flex items-center ${
-                      isCollapsed ? 'justify-center px-0 py-2.5' : 'justify-between px-3.5 py-2.5'
-                    } rounded-xl text-xs font-semibold transition-all relative cursor-pointer ${
-                      isActive
-                        ? 'bg-[#293354] text-white shadow-xs'
-                        : 'text-slate-300 hover:text-white hover:bg-[#232b45]'
-                    }`}
-                  >
-                    <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
-                      <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
-                      {!isCollapsed && <span>{item.label}</span>}
+                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} min-w-0`}>
+                    <div 
+                      style={{ backgroundColor: `${app.color}22`, borderColor: `${app.color}55` }}
+                      className="w-7 h-7 rounded-lg border flex items-center justify-center shrink-0"
+                    >
+                      <AppIcon 
+                        style={{ color: app.color }}
+                        className="w-4 h-4" 
+                      />
                     </div>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-        )}
-
-        {/* Google Workspace Suite */}
-        <div>
-          {!isCollapsed && (
-            <div className="px-3 mb-2 flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Google Workspace
-              </span>
-              <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-700/50 px-1.5 py-0.2 rounded-full">
-                LIVE
-              </span>
-            </div>
-          )}
-          <nav className="space-y-1">
-            {workspaceNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentView === item.id;
-              return (
-                <button
-                  key={item.id}
-                  id={`nav-btn-${item.id}`}
-                  onClick={() => onSelectView(item.id)}
-                  title={isCollapsed ? item.label : undefined}
-                  className={`w-full flex items-center ${
-                    isCollapsed ? 'justify-center px-0 py-2.5' : 'justify-between px-3.5 py-2.5'
-                  } rounded-xl text-xs font-semibold transition-all relative cursor-pointer ${
-                    isActive
-                      ? 'bg-[#293354] text-white shadow-xs'
-                      : 'text-slate-300 hover:text-white hover:bg-[#232b45]'
-                  }`}
-                >
-                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                    {!isCollapsed && <span>{item.label}</span>}
+                    {!isCollapsed && (
+                      <span className="truncate text-left text-xs font-semibold">{app.name}</span>
+                    )}
                   </div>
-                  {!isCollapsed && item.badge !== undefined && (
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.badgeColor || 'bg-slate-800 text-slate-300'}`}>
-                      {item.badge}
-                    </span>
-                  )}
-                  {isCollapsed && item.badge !== undefined && (
-                    <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-red-500" />
+
+                  {!isCollapsed && (
+                    <div className="flex items-center space-x-1.5 text-slate-400 shrink-0">
+                      {app.isBase && (
+                        <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800/40">
+                          BASE
+                        </span>
+                      )}
+                      {isAppExpanded ? (
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                      ) : (
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                      )}
+                    </div>
                   )}
                 </button>
-              );
-            })}
-          </nav>
+
+                {/* Sub-Features: SHOWN ONLY UNDER THE CURRENT/EXPANDED APP AS INDENTED */}
+                {!isCollapsed && isAppExpanded && (
+                  <div className="ml-5 pl-3 border-l-2 border-slate-200 dark:border-[#2f3b5e] my-1 space-y-0.5 animate-in fade-in slide-in-from-top-1 duration-150">
+                    {app.features.map((feature) => {
+                      const FeatureIcon = feature.icon;
+                      const isFeatureActive = currentView === feature.id && !feature.action;
+
+                      return (
+                        <button
+                          key={feature.label}
+                          type="button"
+                          id={`feature-nav-${feature.id}`}
+                          onClick={() => {
+                            if (feature.action) {
+                              feature.action();
+                            } else {
+                              onSelectView(feature.id);
+                            }
+                          }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
+                            isFeatureActive
+                              ? 'bg-indigo-100/70 dark:bg-[#2e3b5e] text-indigo-950 dark:text-white font-bold shadow-2xs'
+                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-[#1e263d]'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-2.5 min-w-0">
+                            <FeatureIcon className={`w-3.5 h-3.5 shrink-0 ${isFeatureActive ? 'text-indigo-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`} />
+                            <span className="truncate">{feature.label}</span>
+                          </div>
+
+                          {feature.badge !== undefined && (
+                            <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full shrink-0 ${feature.badgeColor || 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200'}`}>
+                              {feature.badge}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
-        {/* Gemini AI Intelligence Banner */}
-        {!isCollapsed ? (
-          <div className="p-3.5 bg-[#242c47] border border-[#313c5e] rounded-2xl space-y-2.5">
-            <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 rounded-lg bg-[#cca458]/20 flex items-center justify-center">
-                <Sparkles className="w-3 h-3 text-[#cca458]" />
+        {/* Compact AI Assistant Trigger */}
+        <div className="pt-3">
+          {!isCollapsed ? (
+            <div className="p-2.5 bg-slate-100/90 dark:bg-[#1b233a] border border-slate-200 dark:border-[#273252] rounded-xl flex items-center justify-between shadow-2xs">
+              <div className="flex items-center space-x-2 min-w-0">
+                <div className="w-6 h-6 rounded-md bg-[#cca458]/20 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-3.5 h-3.5 text-[#cca458]" />
+                </div>
+                <div className="truncate">
+                  <div className="text-[11px] font-bold text-slate-900 dark:text-white leading-none">Gemini Copilot</div>
+                  <div className="text-[9px] text-slate-500 dark:text-slate-400 truncate">High Thinking reasoning</div>
+                </div>
               </div>
-              <div className="text-xs font-bold text-white">Gemini Intelligence</div>
+
+              <div className="flex items-center space-x-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={openHighThinking}
+                  title="Open High Thinking Studio"
+                  className="p-1.5 rounded-lg bg-[#cca458] hover:bg-[#b8934b] text-[#161c2e] transition-colors cursor-pointer shadow-2xs"
+                >
+                  <BrainCircuit className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={openAiChat}
+                  title="Open AI Chat Drawer"
+                  className="p-1.5 rounded-lg bg-slate-200 dark:bg-[#242e4c] hover:bg-slate-300 dark:hover:bg-[#2d395e] text-emerald-700 dark:text-emerald-400 transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Bot className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
-            <p className="text-[11px] text-slate-300 leading-relaxed">
-              High Thinking AI step reasoning & executive proposal drafting.
-            </p>
-            <div className="pt-1 flex flex-col gap-1.5">
+          ) : (
+            <div className="flex flex-col items-center space-y-1.5 pt-1">
               <button
+                type="button"
                 onClick={openHighThinking}
-                className="w-full py-2 px-3 bg-[#cca458] hover:bg-[#b8934b] text-[#1c2237] text-xs font-bold rounded-xl flex items-center justify-center space-x-1.5 transition-all shadow-xs cursor-pointer"
+                title="Gemini High Thinking"
+                className="w-8 h-8 rounded-lg bg-[#cca458] hover:bg-[#b8934b] text-[#161c2e] flex items-center justify-center shadow-xs cursor-pointer"
               >
-                <BrainCircuit className="w-3.5 h-3.5" />
-                <span>High Thinking Studio</span>
+                <BrainCircuit className="w-4 h-4" />
               </button>
               <button
+                type="button"
                 onClick={openAiChat}
-                className="w-full py-1.5 px-3 bg-[#1c2237] hover:bg-[#161b2d] text-slate-200 text-xs font-semibold rounded-xl flex items-center justify-center space-x-1.5 border border-[#384469] transition-all cursor-pointer"
+                title="Gemini AI Copilot"
+                className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-[#242e4c] hover:bg-slate-200 dark:hover:bg-[#2d395e] text-emerald-700 dark:text-emerald-400 flex items-center justify-center border border-slate-200 dark:border-[#34426b] cursor-pointer shadow-2xs"
               >
-                <Bot className="w-3.5 h-3.5 text-emerald-400" />
-                <span>AI Copilot</span>
+                <Bot className="w-4 h-4" />
               </button>
             </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center space-y-2 pt-2">
-            <button
-              onClick={openHighThinking}
-              title="Gemini High Thinking Studio"
-              className="w-10 h-10 rounded-xl bg-[#cca458] hover:bg-[#b8934b] text-[#1c2237] flex items-center justify-center transition-all shadow-xs cursor-pointer"
-            >
-              <BrainCircuit className="w-5 h-5" />
-            </button>
-            <button
-              onClick={openAiChat}
-              title="Gemini AI Copilot"
-              className="w-10 h-10 rounded-xl bg-[#242c47] hover:bg-[#2d3859] text-emerald-400 flex items-center justify-center border border-[#384469] transition-all cursor-pointer"
-            >
-              <Bot className="w-5 h-5" />
-            </button>
-          </div>
-        )}
-
-        {/* App Store & ERP Settings Nav Buttons */}
-        <div className="pt-2 space-y-1">
-          {onNavigateToAppStore && (
-            <button
-              onClick={onNavigateToAppStore}
-              title="Navastra App Store"
-              className={`w-full flex items-center ${
-                isCollapsed ? 'justify-center px-0 py-2.5' : 'space-x-3 px-3.5 py-2.5'
-              } rounded-xl text-xs font-semibold ${
-                currentView === 'app_store' ? 'bg-[#293354] text-white' : 'text-slate-300 hover:text-white hover:bg-[#232b45]'
-              } transition-all cursor-pointer`}
-            >
-              <ShoppingBag className="w-4 h-4 text-emerald-400" />
-              {!isCollapsed && <span>App Store</span>}
-            </button>
-          )}
-
-          {onOpenCrmSettings && (
-            <button
-              onClick={onOpenCrmSettings}
-              title="ERP Settings & Pipeline Colors"
-              className={`w-full flex items-center ${
-                isCollapsed ? 'justify-center px-0 py-2.5' : 'space-x-3 px-3.5 py-2.5'
-              } rounded-xl text-xs font-semibold ${
-                currentView === 'settings' ? 'bg-[#293354] text-white' : 'text-slate-300 hover:text-white hover:bg-[#232b45]'
-              } transition-all cursor-pointer`}
-            >
-              <Settings className="w-4 h-4 text-slate-400" />
-              {!isCollapsed && <span>ERP Settings</span>}
-            </button>
           )}
         </div>
       </div>
 
-      {/* User / Org Footer (Matches Image 1 bottom avatar) */}
-      <div className={`p-3.5 border-t border-[#262f4a] bg-[#161c2e] flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
-        <div className="flex items-center space-x-3 min-w-0">
+      {/* User / Org Footer */}
+      <div className={`p-3 border-t border-slate-200 dark:border-[#242c44] bg-slate-50/90 dark:bg-[#131929] flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} transition-colors`}>
+        <div className="flex items-center space-x-2.5 min-w-0">
           <div 
             onClick={onOpenCrmSettings}
-            className="w-9 h-9 rounded-full bg-[#3b5358] text-slate-100 font-bold text-xs flex items-center justify-center shadow-xs shrink-0 cursor-pointer hover:ring-2 hover:ring-[#cca458]/50"
-            title="Alex Rivera (AN)"
+            className="w-8 h-8 rounded-full bg-slate-700 dark:bg-[#3b5358] text-slate-100 font-bold text-xs flex items-center justify-center shadow-xs shrink-0 cursor-pointer hover:ring-2 hover:ring-[#cca458]/50"
+            title="Alex Rivera (AN) - Click for ERP settings"
           >
             AN
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-bold text-white truncate">Alex Rivera</div>
-              <div className="text-[10px] text-slate-400 truncate">Enterprise Sales</div>
+              <div className="text-xs font-bold text-slate-900 dark:text-white truncate">Alex Rivera</div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">Enterprise Sales</div>
             </div>
           )}
         </div>
-        {!isCollapsed ? (
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" title="Connected" />
-        ) : (
-          null
+        {!isCollapsed && (
+          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 shadow-2xs" title="Connected" />
         )}
       </div>
 
-      {/* Expand trigger when collapsed */}
+      {/* Expand trigger button when collapsed */}
       {isCollapsed && onToggleCollapse && (
         <button
           onClick={onToggleCollapse}
-          className="absolute -right-3 top-24 w-6 h-6 rounded-full bg-[#293354] border border-[#3b476e] text-white flex items-center justify-center shadow-md hover:bg-[#cca458] hover:text-slate-900 transition-all z-20 cursor-pointer"
+          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-white dark:bg-[#252f4c] border border-slate-300 dark:border-[#37446d] text-slate-700 dark:text-white flex items-center justify-center shadow-md hover:bg-slate-100 dark:hover:bg-[#cca458] dark:hover:text-slate-900 transition-all z-20 cursor-pointer"
           title="Expand Sidebar"
         >
           <PanelLeftOpen className="w-3.5 h-3.5" />
@@ -385,4 +535,3 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </aside>
   );
 };
-

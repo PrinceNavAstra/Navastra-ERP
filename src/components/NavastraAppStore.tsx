@@ -121,33 +121,33 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
   const installedCount = apps.filter(a => a.isInstalled).length;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] p-6 lg:p-10 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-200">
+    <div className="min-h-[calc(100vh-4rem)] p-6 lg:p-10 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-200 text-slate-800 dark:text-slate-100">
       
       {/* Top Header & Breadcrumb */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <button
             onClick={onBackToDashboard}
-            className="p-2.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 shadow-2xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="p-2.5 rounded-2xl bg-white dark:bg-[#182138] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#202c4b] text-slate-700 dark:text-slate-200 shadow-2xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
             title="Back to App Dashboard"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <div className="flex items-center space-x-2 text-xs font-semibold text-slate-500">
+            <div className="flex items-center space-x-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
               <span>Navastra</span>
               <span>/</span>
-              <span className="text-emerald-700 font-bold">App Store & Modules</span>
+              <span className="text-emerald-700 dark:text-emerald-400 font-bold">App Store & Modules</span>
             </div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Enterprise Module Registry
             </h1>
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 text-xs font-semibold text-slate-600">
-          <span className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-            <strong className="text-emerald-700">{installedCount}</strong> of {apps.length} Modules Installed
+        <div className="flex items-center space-x-3 text-xs font-semibold text-slate-600 dark:text-slate-300">
+          <span className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#182138] border border-slate-200 dark:border-slate-700 shadow-2xs">
+            <strong className="text-emerald-700 dark:text-emerald-400">{installedCount}</strong> of {apps.length} Modules Installed
           </span>
         </div>
       </div>
@@ -188,17 +188,17 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search apps by name, category, or workflow..."
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-2xs"
+              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-2xs"
             />
           </div>
 
-          <div className="flex items-center space-x-2 bg-white p-1 rounded-2xl border border-slate-200 shadow-2xs self-start md:self-auto">
+          <div className="flex items-center space-x-2 bg-white dark:bg-[#182138] p-1 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xs self-start md:self-auto">
             <button
               onClick={() => setFilterType('all')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 filterType === 'all'
-                  ? 'bg-[#1c2237] text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               All ({apps.length})
@@ -207,8 +207,8 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
               onClick={() => setFilterType('installed')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 filterType === 'installed'
-                  ? 'bg-emerald-700 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-emerald-700 dark:bg-emerald-600 text-white shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Installed ({installedCount})
@@ -217,8 +217,8 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
               onClick={() => setFilterType('available')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 filterType === 'available'
-                  ? 'bg-indigo-700 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-indigo-700 dark:bg-indigo-600 text-white shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Available ({apps.length - installedCount})
@@ -227,15 +227,15 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
         </div>
 
         {/* Category Filter Pills */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-1 kanban-scroll">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  ? 'bg-slate-900 dark:bg-emerald-600 text-white shadow-xs'
+                  : 'bg-white dark:bg-[#182138] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#202c4b]'
               }`}
             >
               {cat}
@@ -252,7 +252,7 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
           return (
             <div
               key={app.id}
-              className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-slate-300 transition-all p-5 flex flex-col justify-between space-y-4 group relative overflow-hidden"
+              className="bg-white dark:bg-[#141b2d] rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-2xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all p-5 flex flex-col justify-between space-y-4 group relative overflow-hidden"
             >
               {/* Card Header */}
               <div className="flex items-start space-x-3.5">
@@ -265,26 +265,26 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1">
-                    <h3 className="font-bold text-sm text-slate-900 truncate">
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate">
                       {app.name}
                     </h3>
                     {app.isBase && (
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold shrink-0">
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40 text-[10px] font-bold shrink-0">
                         Base CRM
                       </span>
                     )}
                     {app.badge && !app.isBase && (
-                      <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold shrink-0">
+                      <span className="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/40 text-[10px] font-bold shrink-0">
                         {app.badge}
                       </span>
                     )}
                   </div>
 
-                  <p className="text-[11px] text-slate-500 font-medium line-clamp-1 mt-0.5">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium line-clamp-1 mt-0.5">
                     {app.tagline}
                   </p>
 
-                  <div className="flex items-center space-x-3 mt-1.5 text-[10px] text-slate-400 font-medium">
+                  <div className="flex items-center space-x-3 mt-1.5 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
                     <span>{app.author}</span>
                     <span>•</span>
                     <div className="flex items-center space-x-1 text-amber-500">
@@ -298,18 +298,18 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
               </div>
 
               {/* Description */}
-              <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
                 {app.description}
               </p>
 
               {/* Progress Bar during installation */}
               {isCurrentlyInstalling && (
                 <div className="space-y-1.5 animate-in fade-in duration-150">
-                  <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
                     <span>Installing {app.name} schema...</span>
                     <span>{installProgress}%</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
                     <div 
                       className="bg-emerald-500 h-full rounded-full transition-all duration-200"
                       style={{ width: `${installProgress}%` }}
@@ -320,8 +320,8 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
 
               {/* Card Footer / Action Button */}
               {!isCurrentlyInstalling && (
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-semibold text-slate-400">
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
                     {app.category}
                   </span>
 
@@ -330,16 +330,16 @@ export const NavastraAppStore: React.FC<NavastraAppStoreProps> = ({
                       <>
                         <button
                           onClick={() => onLaunchApp(app.id, app.defaultView)}
-                          className="px-3.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer"
+                          className="px-3.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer"
                         >
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                           <span>Open</span>
                         </button>
 
                         {!app.isBase && (
                           <button
                             onClick={() => onUninstallApp(app.id)}
-                            className="p-1.5 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl transition-colors cursor-pointer"
+                            className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-xl transition-colors cursor-pointer"
                             title="Uninstall app"
                           >
                             <Trash2 className="w-3.5 h-3.5" />

@@ -14,20 +14,29 @@ import {
   Mail,
   Calendar,
   Lock,
-  Cpu
+  Cpu,
+  Sun,
+  Moon,
+  Monitor
 } from 'lucide-react';
-import { StageColorConfig, DealStage } from '../../types';
+import { StageColorConfig, DealStage, ThemeMode } from '../../types';
 
 interface SettingsAppViewProps {
   stageColors: StageColorConfig[];
   onUpdateStageColors?: (stages: StageColorConfig[]) => void;
+  theme?: ThemeMode;
+  onToggleTheme?: () => void;
+  onSetTheme?: (theme: ThemeMode) => void;
 }
 
 export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
   stageColors,
-  onUpdateStageColors
+  onUpdateStageColors,
+  theme = 'light',
+  onToggleTheme,
+  onSetTheme
 }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'pipeline' | 'google' | 'ai' | 'security'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'pipeline' | 'google' | 'ai' | 'security'>('general');
   const [isSaved, setIsSaved] = useState(false);
 
   // Form states
@@ -53,16 +62,16 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
     <div className="space-y-6 max-w-5xl mx-auto animate-in fade-in duration-200">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#111627] p-6 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-2xs transition-colors">
         <div className="space-y-1">
           <div className="flex items-center space-x-2">
-            <span className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[10px] font-bold">
               SYSTEM CONFIGURATION
             </span>
             <span className="text-xs text-slate-400 font-medium">Navastra ERP Master Control</span>
           </div>
-          <h2 className="text-xl font-extrabold text-slate-900">ERP Global Settings</h2>
-          <p className="text-xs text-slate-500">Configure company organization profile, pipeline stage behaviors, Google Workspace bridges, and Gemini AI engines.</p>
+          <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">ERP Global Settings</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Configure appearance, theme modes, company organization profile, pipeline stages, and AI engines.</p>
         </div>
 
         <button
@@ -75,11 +84,11 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
       </div>
 
       {/* Settings Navigation Tabs */}
-      <div className="flex items-center space-x-2 bg-white p-1.5 rounded-2xl border border-slate-200/80 shadow-2xs overflow-x-auto">
+      <div className="flex items-center space-x-2 bg-white dark:bg-[#111627] p-1.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-x-auto transition-colors">
         <button
           onClick={() => setActiveTab('general')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'general' ? 'bg-[#1c2237] text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+            activeTab === 'general' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <Building2 className="w-3.5 h-3.5" />
@@ -87,9 +96,19 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('appearance')}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'appearance' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Sun className="w-3.5 h-3.5 text-amber-500" />
+          <span>Theme & Appearance</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('pipeline')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'pipeline' ? 'bg-[#1c2237] text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+            activeTab === 'pipeline' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <Palette className="w-3.5 h-3.5" />
@@ -99,7 +118,7 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         <button
           onClick={() => setActiveTab('google')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'google' ? 'bg-[#1c2237] text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+            activeTab === 'google' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <Globe className="w-3.5 h-3.5 text-red-500" />
@@ -109,7 +128,7 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         <button
           onClick={() => setActiveTab('ai')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'ai' ? 'bg-[#1c2237] text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+            activeTab === 'ai' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
@@ -119,7 +138,7 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         <button
           onClick={() => setActiveTab('security')}
           className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'security' ? 'bg-[#1c2237] text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+            activeTab === 'security' ? 'bg-[#1c2237] dark:bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <Shield className="w-3.5 h-3.5" />
@@ -128,30 +147,110 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
       </div>
 
       {/* Tab Content Panes */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-2xs space-y-6">
+      <div className="bg-white dark:bg-[#111627] rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-6 transition-colors">
         
+        {/* Appearance & Theme Tab */}
+        {activeTab === 'appearance' && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Theme & Display Mode</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Switch between Dark Mode and Light Mode. All colors, text contrasts, hover effects, and cards update dynamically.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Light Mode Card */}
+              <div 
+                onClick={() => onSetTheme ? onSetTheme('light') : onToggleTheme && theme === 'dark' && onToggleTheme()}
+                className={`p-5 rounded-2xl border-2 transition-all cursor-pointer select-none ${
+                  theme === 'light'
+                    ? 'border-emerald-500 bg-emerald-50/50 shadow-md'
+                    : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 rounded-xl bg-amber-100 text-amber-700">
+                      <Sun className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white">Light Mode</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">Clean white and warm slate aesthetic</div>
+                    </div>
+                  </div>
+                  {theme === 'light' && (
+                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center">
+                      <Check className="w-3.5 h-3.5" />
+                    </span>
+                  )}
+                </div>
+                <div className="h-16 rounded-xl bg-white border border-slate-200 p-2.5 flex items-center space-x-2">
+                  <div className="w-6 h-6 rounded-md bg-emerald-500" />
+                  <div className="space-y-1 flex-1">
+                    <div className="w-20 h-2 rounded bg-slate-200" />
+                    <div className="w-14 h-1.5 rounded bg-slate-100" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Dark Mode Card */}
+              <div 
+                onClick={() => onSetTheme ? onSetTheme('dark') : onToggleTheme && theme === 'light' && onToggleTheme()}
+                className={`p-5 rounded-2xl border-2 transition-all cursor-pointer select-none ${
+                  theme === 'dark'
+                    ? 'border-emerald-500 bg-emerald-950/20 shadow-md'
+                    : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 rounded-xl bg-indigo-900/50 text-indigo-400">
+                      <Moon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white">Dark Mode</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">Deep sapphire navy & high-contrast slate</div>
+                    </div>
+                  </div>
+                  {theme === 'dark' && (
+                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center">
+                      <Check className="w-3.5 h-3.5" />
+                    </span>
+                  )}
+                </div>
+                <div className="h-16 rounded-xl bg-[#0b0f19] border border-slate-800 p-2.5 flex items-center space-x-2">
+                  <div className="w-6 h-6 rounded-md bg-emerald-500" />
+                  <div className="space-y-1 flex-1">
+                    <div className="w-20 h-2 rounded bg-slate-700" />
+                    <div className="w-14 h-1.5 rounded bg-slate-800" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* General Tab */}
         {activeTab === 'general' && (
           <div className="space-y-5">
-            <h3 className="text-base font-bold text-slate-900">Organization & Currency</h3>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">Organization & Currency</h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">ERP System & Enterprise Name</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">ERP System & Enterprise Name</label>
                 <input
                   type="text"
                   value={companyName}
                   onChange={e => setCompanyName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Primary Accounting Currency</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Primary Accounting Currency</label>
                 <select
                   value={currency}
                   onChange={e => setCurrency(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 >
                   <option>USD ($) - United States Dollar</option>
                   <option>EUR (€) - Euro</option>
@@ -162,22 +261,22 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">System Timezone</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">System Timezone</label>
                 <input
                   type="text"
                   value={timezone}
                   onChange={e => setTimezone(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Fiscal Calendar Year</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Fiscal Calendar Year</label>
                 <input
                   type="text"
                   value={fiscalYear}
                   onChange={e => setFiscalYear(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
             </div>
@@ -188,20 +287,20 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         {activeTab === 'pipeline' && (
           <div className="space-y-5">
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-slate-900">Kanban Pipeline Stage Styling</h3>
-              <p className="text-xs text-slate-500">Configure visual themes, cards, and badges across your sales stages.</p>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Kanban Pipeline Stage Styling</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Configure visual themes, cards, and badges across your sales stages.</p>
             </div>
 
             <div className="space-y-3">
               {stages.map((st, idx) => (
-                <div key={st.id} className="p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div key={st.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#182138] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
                   <div className="flex items-center space-x-3">
                     <span 
                       style={{ backgroundColor: st.color }}
                       className="w-4 h-4 rounded-full shrink-0 shadow-sm"
                     />
                     <div>
-                      <div className="font-bold text-xs text-slate-900">{st.label}</div>
+                      <div className="font-bold text-xs text-slate-900 dark:text-white">{st.label}</div>
                       <div className="text-[10px] text-slate-400 font-mono">Stage ID: {st.id}</div>
                     </div>
                   </div>
@@ -221,7 +320,7 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
                         updated[idx].color = e.target.value;
                         setStages(updated);
                       }}
-                      className="w-8 h-8 rounded-lg cursor-pointer border border-slate-200 p-0.5"
+                      className="w-8 h-8 rounded-lg cursor-pointer border border-slate-200 dark:border-slate-700 p-0.5 bg-white dark:bg-slate-800"
                     />
                   </div>
                 </div>
@@ -233,33 +332,33 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         {/* Google Workspace Tab */}
         {activeTab === 'google' && (
           <div className="space-y-5">
-            <h3 className="text-base font-bold text-slate-900">Google Workspace Integrations</h3>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">Google Workspace Integrations</h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl border border-slate-200/90 bg-slate-50/50 space-y-2">
+              <div className="p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-[#182138] space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2 font-bold text-xs text-slate-900">
+                  <div className="flex items-center space-x-2 font-bold text-xs text-slate-900 dark:text-white">
                     <Video className="w-4 h-4 text-red-600" />
                     <span>Google Meet Scheduler</span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold">
                     Connected
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500">Auto-generates encrypted Google Meet links on deal meetings.</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Auto-generates encrypted Google Meet links on deal meetings.</p>
               </div>
 
-              <div className="p-4 rounded-2xl border border-slate-200/90 bg-slate-50/50 space-y-2">
+              <div className="p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-[#182138] space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2 font-bold text-xs text-slate-900">
+                  <div className="flex items-center space-x-2 font-bold text-xs text-slate-900 dark:text-white">
                     <Mail className="w-4 h-4 text-red-600" />
                     <span>Gmail Two-Way Sync</span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold">
                     Active
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500">Logs incoming customer correspondence directly to deal timelines.</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Logs incoming customer correspondence directly to deal timelines.</p>
               </div>
             </div>
           </div>
@@ -268,15 +367,15 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         {/* AI Tab */}
         {activeTab === 'ai' && (
           <div className="space-y-5">
-            <h3 className="text-base font-bold text-slate-900">Gemini Intelligence Engine</h3>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">Gemini Intelligence Engine</h3>
             
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Default Model</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Default Model</label>
                 <select
                   value={aiModel}
                   onChange={e => setAiModel(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#182138] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 >
                   <option value="gemini-3.5-flash">Gemini 2.5 Flash (Ultra-Low Latency & Proposal Drafter)</option>
                   <option value="gemini-3.5-pro">Gemini 2.5 Pro (Deep Strategic Revenue Auditor)</option>
@@ -284,10 +383,10 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
                 </select>
               </div>
 
-              <div className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 bg-slate-50/50">
+              <div className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#182138]">
                 <div>
-                  <div className="font-bold text-xs text-slate-900">High Thinking Mode</div>
-                  <div className="text-[11px] text-slate-500">Expose deep step-by-step reasoning tokens for complex deal analysis</div>
+                  <div className="font-bold text-xs text-slate-900 dark:text-white">High Thinking Mode</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">Expose deep step-by-step reasoning tokens for complex deal analysis</div>
                 </div>
                 <input
                   type="checkbox"
@@ -303,21 +402,21 @@ export const SettingsAppView: React.FC<SettingsAppViewProps> = ({
         {/* Security Tab */}
         {activeTab === 'security' && (
           <div className="space-y-5">
-            <h3 className="text-base font-bold text-slate-900">User Roles & Access Control</h3>
-            <div className="text-xs text-slate-600 space-y-2">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">User Roles & Access Control</h3>
+            <div className="text-xs text-slate-600 dark:text-slate-300 space-y-2">
+              <div className="p-3 bg-slate-50 dark:bg-[#182138] rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-slate-800">Admin Role</div>
-                  <div className="text-[10px] text-slate-500">Full system access, app installations, and settings configuration</div>
+                  <div className="font-bold text-slate-800 dark:text-white">Admin Role</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Full system access, app installations, and settings configuration</div>
                 </div>
-                <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded text-[10px] font-bold">1 User</span>
+                <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded text-[10px] font-bold">1 User</span>
               </div>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+              <div className="p-3 bg-slate-50 dark:bg-[#182138] rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-slate-800">Sales Executive</div>
-                  <div className="text-[10px] text-slate-500">Create leads, manage assigned pipeline deals, view calendar</div>
+                  <div className="font-bold text-slate-800 dark:text-white">Sales Executive</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400">Create leads, manage assigned pipeline deals, view calendar</div>
                 </div>
-                <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[10px] font-bold">14 Users</span>
+                <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded text-[10px] font-bold">14 Users</span>
               </div>
             </div>
           </div>
